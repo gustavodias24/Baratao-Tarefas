@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.UserManager;
 import android.util.Log;
@@ -57,13 +58,19 @@ public class CadastroActivity extends AppCompatActivity {
             novoUsuario.setNome(mainBinding.nomeField.getEditText().getText().toString().trim());
             novoUsuario.setSenha(mainBinding.senhaField.getEditText().getText().toString().trim());
 
-            auth.createUserWithEmailAndPassword(novoUsuario.getEmail(), novoUsuario.getSenha()).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                @Override
-                public void onComplete(@NonNull Task<AuthResult> task) {
+            if ( !novoUsuario.getEmail().isEmpty() && !novoUsuario.getSenha().isEmpty() ){
+                auth.createUserWithEmailAndPassword(novoUsuario.getEmail(), novoUsuario.getSenha()).addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         refUsuarios.child(novoUsuario.getId()).setValue(novoUsuario).addOnCompleteListener( taskUsuario -> {
                             if ( taskUsuario.isSuccessful() ){
-                                Toast.makeText(CadastroActivity.this, "Usuário criado com sucesso.", Toast.LENGTH_SHORT).show();
+                                auth.signInWithEmailAndPassword(novoUsuario.getEmail(), novoUsuario.getSenha()).addOnCompleteListener( logarTask -> {
+                                    if ( task.isSuccessful()){
+                                        Toast.makeText(CadastroActivity.this, "Usuário criado com sucesso.", Toast.LENGTH_SHORT).show();
+                                        startActivity(new Intent(this, TarefasActivity.class));
+                                    }else{
+                                        exibirError("Conta criada, volte e faça login!");
+                                    }
+                                });
                             }else{
                                 exibirError("Erro de conexão, tente novamente.");
                             }
@@ -81,8 +88,8 @@ public class CadastroActivity extends AppCompatActivity {
                             exibirError(e.getMessage());
                         }
                     }
-                }
-            });
+                });
+            }
 
         });
 

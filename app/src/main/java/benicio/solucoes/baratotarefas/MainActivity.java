@@ -10,6 +10,9 @@ import android.os.Handler;
 import android.view.WindowManager;
 import android.view.animation.AlphaAnimation;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.FirebaseDatabase;
 import com.squareup.picasso.Picasso;
 
 import benicio.solucoes.baratotarefas.databinding.ActivityMainBinding;
@@ -17,6 +20,7 @@ import benicio.solucoes.baratotarefas.databinding.ActivityMainBinding;
 public class MainActivity extends AppCompatActivity {
 
     private ActivityMainBinding mainBinding;
+    private FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
     private static final int SPLASH_DURATION = 3000;
     @SuppressLint("ResourceType")
     @Override
@@ -38,10 +42,10 @@ public class MainActivity extends AppCompatActivity {
         // Inicia a próxima atividade após 3 segundos
         new Handler().postDelayed(() -> {
             Intent intent;
-            if ( true ){
+            if ( user == null ){
                 intent = new Intent(getApplicationContext(), LoginActivity.class);
             }else{
-                // tela principal
+                intent = new Intent(getApplicationContext(), TarefasActivity.class);
             }
             startActivity(intent);
             finish();
