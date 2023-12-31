@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "904649713251",
+    "project_id": "baratao-tarefas",
+    "storage_bucket": "baratao-tarefas.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:904649713251:android:0960373f3fc7a77806fa56",
+        "android_client_info": {
+          "package_name": "benicio.solucoes.baratotarefas"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBzBxdoXqTAEYXUo7R43BmW9FQKaF-HKhQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
