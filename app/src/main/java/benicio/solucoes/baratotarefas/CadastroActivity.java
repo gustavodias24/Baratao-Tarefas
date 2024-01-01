@@ -4,6 +4,8 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.UserManager;
@@ -27,9 +29,11 @@ import java.util.UUID;
 
 import benicio.solucoes.baratotarefas.databinding.ActivityCadastroBinding;
 import benicio.solucoes.baratotarefas.databinding.ActivityLoginBinding;
+import benicio.solucoes.baratotarefas.databinding.LoadingScreenBinding;
 import benicio.solucoes.baratotarefas.model.UserModel;
 
 public class CadastroActivity extends AppCompatActivity {
+    private Dialog dialogCarregando;
     private static final String TAG = "mayara";
     private ActivityCadastroBinding mainBinding;
     private DatabaseReference refUsuarios = FirebaseDatabase.getInstance().getReference().getRoot().child("usuarios");
@@ -41,6 +45,7 @@ public class CadastroActivity extends AppCompatActivity {
         setContentView(mainBinding.getRoot());
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
 
+        configurarDialogCarregando();
 
         getSupportActionBar().setTitle("CADASTRO");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -59,12 +64,15 @@ public class CadastroActivity extends AppCompatActivity {
             novoUsuario.setSenha(mainBinding.senhaField.getEditText().getText().toString().trim());
 
             if ( !novoUsuario.getEmail().isEmpty() && !novoUsuario.getSenha().isEmpty() ){
-                auth.createUserWithEmailAndPassword(novoUsuario.getEmail(), novoUsuario.getSenha()).addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
+
+                dialogCarregando.show();
+
+                auth.createUserWithEmailAndPassword(novoUsuario.getEmail(), novoUsuario.getSenha()).addOnCompleteListener(criarTask -> {
+                    if (criarTask.isSuccessful()) {
                         refUsuarios.child(novoUsuario.getId()).setValue(novoUsuario).addOnCompleteListener( taskUsuario -> {
                             if ( taskUsuario.isSuccessful() ){
                                 auth.signInWithEmailAndPassword(novoUsuario.getEmail(), novoUsuario.getSenha()).addOnCompleteListener( logarTask -> {
-                                    if ( task.isSuccessful()){
+                                    if ( logarTask.isSuccessful()){
                                         Toast.makeText(CadastroActivity.this, "Usuário criado com sucesso.", Toast.LENGTH_SHORT).show();
                                         startActivity(new Intent(this, TarefasActivity.class));
                                     }else{
@@ -77,7 +85,7 @@ public class CadastroActivity extends AppCompatActivity {
                         });
                     } else {
                         try {
-                            throw task.getException();
+                            throw criarTask.getException();
                         } catch (FirebaseAuthWeakPasswordException e) {
                             exibirError("Senha fraca!");
                         } catch (FirebaseAuthInvalidCredentialsException e) {
@@ -95,6 +103,13 @@ public class CadastroActivity extends AppCompatActivity {
 
     }
 
+    private void configurarDialogCarregando() {
+        AlertDialog.Builder b = new AlertDialog.Builder(this);
+        b.setCancelable(false);
+        LoadingScreenBinding dialogBinding = LoadingScreenBinding.inflate(getLayoutInflater());
+        dialogCarregando = b.setView(dialogBinding.getRoot()).create();
+    }
+
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if ( item.getItemId() == android.R.id.home){finish();}
@@ -102,6 +117,7 @@ public class CadastroActivity extends AppCompatActivity {
     }
 
     public void exibirError(String erro){
+        dialogCarregando.dismiss();
         mainBinding.textInfo.setVisibility(View.VISIBLE);
         mainBinding.textInfo.setText(erro);
         Toast.makeText(this, erro, Toast.LENGTH_SHORT).show();
