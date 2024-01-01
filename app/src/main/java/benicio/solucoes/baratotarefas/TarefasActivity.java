@@ -32,6 +32,10 @@ public class TarefasActivity extends AppCompatActivity {
 
         Picasso.get().load(R.raw.semtarefas).into(mainBinding.semtarefaimage);
         getSupportActionBar().setTitle("TAREFAS");
+
+        mainBinding.fab.setOnClickListener( view -> {
+            startActivity(new Intent(this, CriacaoTarefaActivity.class));
+        });
     }
 
     @Override

@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:fillViewport="true"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent"
+    >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/amarelo"
+        android:orientation="vertical"
+        android:padding="8dp"
+        tools:context=".CriacaoTarefaActivity">
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/nomeField"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:hint="Nome da Tarefa"
+            android:textColorHint="#000000"
+            app:boxBackgroundColor="#FFFFFF"
+            app:boxCornerRadiusBottomEnd="16dp"
+            app:boxCornerRadiusBottomStart="16dp"
+            app:boxCornerRadiusTopEnd="16dp"
+            app:boxCornerRadiusTopStart="16dp"
+            app:boxStrokeColor="#000000"
+            app:hintTextColor="#000000">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <Button
+                android:id="@+id/procurarResponsavel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:layout_weight="0"
+                android:backgroundTint="#FFFFFF"
+                android:isScrollContainer="false"
+                android:paddingTop="16dp"
+                android:paddingBottom="16dp"
+                android:pointerIcon="cell"
+                android:text="Pessoal Responsável"
+                android:textColor="#000000"
+                app:icon="@drawable/baseline_border_color_24"
+                app:iconGravity="textEnd"
+                app:iconTint="#000000"
+                app:iconTintMode="src_in" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerResponsavel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#FF0000"
+                android:backgroundTint="#C3C5C6" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="CheckList de verificação"
+            android:textColor="#000000"
+            android:textSize="24sp"
+            android:textStyle="bold" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <Button
+                android:id="@+id/adicionarCheck"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:layout_weight="0"
+                android:backgroundTint="#FFFFFF"
+                android:isScrollContainer="false"
+                android:paddingTop="16dp"
+                android:paddingBottom="16dp"
+                android:pointerIcon="cell"
+                android:text="Adicionar Check"
+                android:textColor="#000000"
+                app:icon="@drawable/baseline_border_color_24"
+                app:iconGravity="textEnd"
+                app:iconTint="#000000"
+                app:iconTintMode="src_in" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerCheck"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#FF0000"
+                android:backgroundTint="#C3C5C6" />
+        </LinearLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/descricaoField"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:layout_weight="0"
+            android:hint="Descrição"
+            android:textColorHint="#000000"
+            app:boxBackgroundColor="#FFFFFF"
+            app:boxCornerRadiusBottomEnd="16dp"
+            app:boxCornerRadiusBottomStart="16dp"
+            app:boxCornerRadiusTopEnd="16dp"
+            app:boxCornerRadiusTopStart="16dp"
+            app:boxStrokeColor="#000000"
+            app:hintTextColor="#000000">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <Button
+                android:id="@+id/enviarArquivo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:layout_weight="0"
+                android:backgroundTint="#FFFFFF"
+                android:isScrollContainer="false"
+                android:paddingTop="16dp"
+                android:paddingBottom="16dp"
+                android:pointerIcon="cell"
+                android:text="Arquivos"
+                android:textColor="#000000"
+                app:icon="@drawable/baseline_insert_drive_file_24"
+                app:iconGravity="textEnd"
+                app:iconTint="#000000"
+                app:iconTintMode="src_in" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/reyclerArquivos"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#FF0000"
+                android:backgroundTint="#C3C5C6" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="0"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/textView3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:layout_weight="0"
+                android:text="Adicionar Observadores"
+                android:textColor="#000000"
+                android:textSize="24sp"
+                android:textStyle="bold" />
+
+            <Button
+                android:id="@+id/procurarObservador"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:layout_weight="0"
+                android:backgroundTint="#FFFFFF"
+                android:isScrollContainer="false"
+                android:paddingTop="16dp"
+                android:paddingBottom="16dp"
+                android:pointerIcon="cell"
+                android:text="Procurar"
+                android:textColor="#000000"
+                app:icon="@drawable/baseline_visibility_24"
+                app:iconGravity="textEnd"
+                app:iconTint="#000000"
+                app:iconTintMode="src_in" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerObservadores"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#FF0000"
+                android:backgroundTint="#C3C5C6" />
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/concluir"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_weight="0"
+            android:backgroundTint="@color/roxo"
+            android:text="CONCLUIR"
+            android:textStyle="bold" />
+
+    </LinearLayout></ScrollView>
