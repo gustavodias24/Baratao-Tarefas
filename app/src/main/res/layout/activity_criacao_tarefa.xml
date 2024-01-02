@@ -49,16 +49,16 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
                 android:layout_weight="0"
-                android:backgroundTint="#FFFFFF"
+                android:backgroundTint="@color/verde"
                 android:isScrollContainer="false"
                 android:paddingTop="16dp"
                 android:paddingBottom="16dp"
                 android:pointerIcon="cell"
                 android:text="Pessoal Responsável"
-                android:textColor="#000000"
+                android:textColor="#FFFFFF"
                 app:icon="@drawable/baseline_border_color_24"
                 app:iconGravity="textEnd"
-                app:iconTint="#000000"
+                app:iconTint="#FFFFFF"
                 app:iconTintMode="src_in" />
 
             <androidx.recyclerview.widget.RecyclerView
@@ -90,17 +90,16 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
                 android:layout_weight="0"
-                android:backgroundTint="#FFFFFF"
+                android:backgroundTint="@color/verde"
                 android:isScrollContainer="false"
                 android:paddingTop="16dp"
                 android:paddingBottom="16dp"
                 android:pointerIcon="cell"
                 android:text="Adicionar Check"
-                android:textColor="#000000"
-                app:icon="@drawable/baseline_border_color_24"
+                android:textColor="#FFFFFF"
+                app:icon="@drawable/baseline_check_24"
                 app:iconGravity="textEnd"
-                app:iconTint="#000000"
-                app:iconTintMode="src_in" />
+                app:iconTint="#FFFFFF" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recyclerCheck"
@@ -144,16 +143,16 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
                 android:layout_weight="0"
-                android:backgroundTint="#FFFFFF"
+                android:backgroundTint="@color/verde"
                 android:isScrollContainer="false"
                 android:paddingTop="16dp"
                 android:paddingBottom="16dp"
                 android:pointerIcon="cell"
                 android:text="Arquivos"
-                android:textColor="#000000"
+                android:textColor="#FFFFFF"
                 app:icon="@drawable/baseline_insert_drive_file_24"
                 app:iconGravity="textEnd"
-                app:iconTint="#000000"
+                app:iconTint="#FFFFFF"
                 app:iconTintMode="src_in" />
 
             <androidx.recyclerview.widget.RecyclerView
@@ -187,16 +186,16 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
                 android:layout_weight="0"
-                android:backgroundTint="#FFFFFF"
+                android:backgroundTint="@color/verde"
                 android:isScrollContainer="false"
                 android:paddingTop="16dp"
                 android:paddingBottom="16dp"
                 android:pointerIcon="cell"
                 android:text="Procurar"
-                android:textColor="#000000"
+                android:textColor="#FFFFFF"
                 app:icon="@drawable/baseline_visibility_24"
                 app:iconGravity="textEnd"
-                app:iconTint="#000000"
+                app:iconTint="#FFFFFF"
                 app:iconTintMode="src_in" />
 
             <androidx.recyclerview.widget.RecyclerView
@@ -213,8 +212,10 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:layout_weight="0"
-            android:backgroundTint="@color/roxo"
+            android:backgroundTint="@color/verde"
             android:text="CONCLUIR"
-            android:textStyle="bold" />
+            android:textColor="#FFFFFF"
+            android:textStyle="bold"
+            app:iconTint="#FFFFFF" />
 
     </LinearLayout></ScrollView>
