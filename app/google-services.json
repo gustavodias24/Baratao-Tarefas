@@ -1,26 +1,37 @@
 {
   "project_info": {
-    "project_number": "904649713251",
-    "project_id": "baratao-tarefas",
-    "storage_bucket": "baratao-tarefas.appspot.com"
+    "project_number": "1024330228009",
+    "firebase_url": "https://obaratao-notificacoes-default-rtdb.firebaseio.com",
+    "project_id": "obaratao-notificacoes",
+    "storage_bucket": "obaratao-notificacoes.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:904649713251:android:0960373f3fc7a77806fa56",
+        "mobilesdk_app_id": "1:1024330228009:android:e289c56ea39b98366ad738",
         "android_client_info": {
           "package_name": "benicio.solucoes.baratotarefas"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "1024330228009-f0b0na9v7mnj2lo251f13svcvvg1ilds.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
-          "current_key": "AIzaSyBzBxdoXqTAEYXUo7R43BmW9FQKaF-HKhQ"
+          "current_key": "AIzaSyCkMMN0W2lLtnqgtjTKZ1GmI3GID8I8bzs"
         }
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1024330228009-f0b0na9v7mnj2lo251f13svcvvg1ilds.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }
