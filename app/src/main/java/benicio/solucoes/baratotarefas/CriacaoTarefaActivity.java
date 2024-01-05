@@ -20,33 +20,47 @@ import android.widget.Toast;
 
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 import benicio.solucoes.baratotarefas.adapter.AdapterArquivos;
+import benicio.solucoes.baratotarefas.adapter.AdapterChecks;
 import benicio.solucoes.baratotarefas.databinding.ActivityCadastroBinding;
 import benicio.solucoes.baratotarefas.databinding.ActivityCriacaoTarefaBinding;
+import benicio.solucoes.baratotarefas.databinding.LayoutCriarCheckBinding;
 import benicio.solucoes.baratotarefas.databinding.LoadingScreenBinding;
+import benicio.solucoes.baratotarefas.model.CheckModel;
 import benicio.solucoes.baratotarefas.model.FileModel;
 
 public class CriacaoTarefaActivity extends AppCompatActivity {
 
     private static final int REQUEST_PICK_FILE = 1;
-    private StorageReference filesTarefa = FirebaseStorage.getInstance().getReference().getRoot().child("filesTarefa");
-    private Dialog dialogCarregando;
+
+    private String idTarefa;
+    private StorageReference filesTarefa;
+    private Dialog dialogCarregando, dialogCriarCheck;
     private ActivityCriacaoTarefaBinding mainBinding;
 
     private RecyclerView recyclerFiles;
     private AdapterArquivos adapterFiles;
     private List<FileModel> listaFilesTarefa = new ArrayList<>();
+
+    private RecyclerView recyclerChecks;
+    private AdapterChecks adapterChecks;
+    private List<CheckModel> listaCheck = new ArrayList<>();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mainBinding = ActivityCriacaoTarefaBinding.inflate(getLayoutInflater());
         setContentView(mainBinding.getRoot());
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+
+        idTarefa = UUID.randomUUID().toString();
+        filesTarefa = FirebaseStorage.getInstance().getReference().getRoot().child("filesTarefa").child(idTarefa);
 
         getSupportActionBar().setTitle("NOVA TAREFA");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -58,8 +72,16 @@ public class CriacaoTarefaActivity extends AppCompatActivity {
             openFilePicker();
         });
 
+        mainBinding.adicionarCheck.setOnClickListener( view -> {
+            dialogCriarCheck.show();
+        });
+
         configurarRecyclerFiles();
+        configurarRecyclerChecks();
+        configurarDialogCriarCheck();
     }
+
+
 
     private void configurarDialogCarregando() {
         AlertDialog.Builder b = new AlertDialog.Builder(this);
@@ -84,14 +106,30 @@ public class CriacaoTarefaActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == REQUEST_PICK_FILE && resultCode == RESULT_OK) {
+            dialogCarregando.show();
             Uri fileUri = data.getData();
             String nomeReal = getFileName(fileUri);
             String nomeExibicao = truncateFileName(nomeReal, 20);
+            String nomeDoBanco = fileNameForDb(nomeReal);
 
-            Toast.makeText(this, "Arquivo Adicionado!", Toast.LENGTH_SHORT).show();
-            listaFilesTarefa.add(new FileModel(nomeReal, fileNameForDb(nomeReal), nomeExibicao, fileUri));
-            adapterFiles.notifyDataSetChanged();
+            UploadTask uploadTask = filesTarefa.child(nomeDoBanco).putFile(fileUri);
 
+            uploadTask.addOnCompleteListener(uploadImageTask -> {
+
+                if ( uploadImageTask.isSuccessful()){
+                    filesTarefa.child(nomeDoBanco).getDownloadUrl().addOnCompleteListener( uri -> {
+                        String linkImage = uri.getResult().toString();
+                        Toast.makeText(this, "Arquivo Adicionado!", Toast.LENGTH_SHORT).show();
+                        listaFilesTarefa.add(new FileModel(nomeReal, nomeDoBanco, nomeExibicao, linkImage, idTarefa));
+                        adapterFiles.notifyDataSetChanged();
+                        dialogCarregando.dismiss();
+                    });
+                }else{
+                    dialogCarregando.dismiss();
+                    Toast.makeText(this, "Erro ao subir arquivo.", Toast.LENGTH_SHORT).show();
+                }
+
+            });
         }
     }
 
@@ -134,8 +172,46 @@ public class CriacaoTarefaActivity extends AppCompatActivity {
         recyclerFiles.setLayoutManager(new LinearLayoutManager(this));
         recyclerFiles.setHasFixedSize(true);
         recyclerFiles.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
-        adapterFiles = new AdapterArquivos(listaFilesTarefa, this);
+        adapterFiles = new AdapterArquivos(listaFilesTarefa, this, idTarefa);
         recyclerFiles.setAdapter(adapterFiles);
+    }
+    private void configurarRecyclerChecks() {
+        recyclerChecks = mainBinding.recyclerCheck;
+        recyclerChecks.setLayoutManager(new LinearLayoutManager(this));
+        recyclerChecks.setHasFixedSize(true);
+        recyclerChecks.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
+        adapterChecks = new AdapterChecks(this, listaCheck);
+        recyclerChecks.setAdapter(adapterChecks);
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    private void configurarDialogCriarCheck(){
+        AlertDialog.Builder b = new AlertDialog.Builder(this);
+        b.setTitle("Adicionar um Check");
+        LayoutCriarCheckBinding checkBinding = LayoutCriarCheckBinding.inflate(getLayoutInflater());
+        checkBinding.cadastrarCheckBtn.setOnClickListener( view -> {
+            String nomeCheck = checkBinding.nomeCheckField.getEditText().getText().toString();
+
+            if ( nomeCheck.isEmpty() ){
+                Toast.makeText(this, "Escreva Algo no Check!", Toast.LENGTH_SHORT).show();
+            }else{
+
+                String checkId = UUID.randomUUID().toString();
+                listaCheck.add(new CheckModel(
+                        checkId, nomeCheck, false
+                ));
+
+                adapterChecks.notifyDataSetChanged();
+                Toast.makeText(this, "Check Adicionado", Toast.LENGTH_SHORT).show();
+                checkBinding.nomeCheckField.getEditText().setText("");
+                dialogCriarCheck.dismiss();
+
+            }
+
+        });
+        b.setView(checkBinding.getRoot());
+
+        dialogCriarCheck = b.create();
     }
 
 

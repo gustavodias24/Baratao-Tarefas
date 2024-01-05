@@ -1,19 +1,34 @@
 package benicio.solucoes.baratotarefas.model;
 
-import android.net.Uri;
-
 public class FileModel {
-    String nomeReal, nomeBancoDeDados, nomeExibicao;
-    Uri uriArquivo;
+    String nomeReal, nomeBancoDeDados, nomeExibicao, idTarefa;
+    String fileLink;
 
     public FileModel() {
     }
 
-    public FileModel(String nomeReal, String nomeBancoDeDados, String nomeExibicao, Uri uriArquivo) {
+    public FileModel(String nomeReal, String nomeBancoDeDados, String nomeExibicao, String fileLink, String idTarefa) {
         this.nomeReal = nomeReal;
         this.nomeBancoDeDados = nomeBancoDeDados;
         this.nomeExibicao = nomeExibicao;
-        this.uriArquivo = uriArquivo;
+        this.fileLink = fileLink;
+        this.idTarefa = idTarefa;
+    }
+
+    public String getIdTarefa() {
+        return idTarefa;
+    }
+
+    public void setIdTarefa(String idTarefa) {
+        this.idTarefa = idTarefa;
+    }
+
+    public String getFileLink() {
+        return fileLink;
+    }
+
+    public void setFileLink(String fileLink) {
+        this.fileLink = fileLink;
     }
 
     public String getNomeBancoDeDados() {
@@ -40,11 +55,11 @@ public class FileModel {
         this.nomeExibicao = nomeExibicao;
     }
 
-    public Uri getUriArquivo() {
-        return uriArquivo;
+    public String getfileLink() {
+        return fileLink;
     }
 
-    public void setUriArquivo(Uri uriArquivo) {
-        this.uriArquivo = uriArquivo;
+    public void setfileLink(String fileLink) {
+        this.fileLink = fileLink;
     }
 }
