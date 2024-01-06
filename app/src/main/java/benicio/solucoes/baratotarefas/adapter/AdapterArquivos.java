@@ -32,14 +32,16 @@ public class AdapterArquivos extends RecyclerView.Adapter<AdapterArquivos.MyView
 
     List<FileModel> listaDeArquivos;
     Activity c;
-    Dialog dialogExibir;
+    Dialog dialogExibir, dialogCarregar;
 
     StorageReference filesTarefa;
 
-    public AdapterArquivos(List<FileModel> listaDeArquivos, Activity c, String idTarefa) {
+
+    public AdapterArquivos(List<FileModel> listaDeArquivos, Activity c, String idTarefa, Dialog dialogCarregar) {
         this.listaDeArquivos = listaDeArquivos;
         this.c = c;
         this.filesTarefa = FirebaseStorage.getInstance().getReference().getRoot().child("filesTarefa").child(idTarefa);
+        this.dialogCarregar = dialogCarregar;
     }
 
     @NonNull
@@ -58,20 +60,20 @@ public class AdapterArquivos extends RecyclerView.Adapter<AdapterArquivos.MyView
         holder.itemView.getRootView().setClickable(false);
 
         holder.removeFile.setOnClickListener( view -> {
-            filesTarefa.child(file.getNomeBancoDeDados()).delete();
-            try{
-                listaDeArquivos.remove(position);
-                this.notifyItemRemoved(position);
-            }catch (Exception e){
-                listaDeArquivos.remove(0);
-                this.notifyDataSetChanged();
-            }
 
+            dialogCarregar.show();
+
+            filesTarefa.child(file.getNomeBancoDeDados()).delete().addOnCompleteListener( task -> {
+                if ( task.isSuccessful() ){
+                   listaDeArquivos.remove(position);
+                   this.notifyDataSetChanged();
+                }
+                dialogCarregar.dismiss();
+            });
         });
 
         holder.viewFile.setOnClickListener( view -> {
-            Log.d("mayara", "onBindViewHolder: " + file.getNomeReal());
-            configurarDialog(file.getfileLink());
+            configurarDialog(file.getfileLink(), file.getNomeReal());
             dialogExibir.show();
         });
 
@@ -85,22 +87,34 @@ public class AdapterArquivos extends RecyclerView.Adapter<AdapterArquivos.MyView
                 || file.getNomeReal().toLowerCase().endsWith(".jpeg") || file.getNomeReal().toLowerCase().endsWith(".gif")
                 || file.getNomeReal().toLowerCase().endsWith(".bmp")) {
             Picasso.get().load(R.raw.filpepng).into(holder.logoFile);
-            configurarDialog(file.getfileLink());
-            holder.viewFile.setVisibility(View.VISIBLE);
         }else if (file.getNomeReal().toLowerCase().endsWith(".mp4") || file.getNomeReal().toLowerCase().endsWith(".3gp")
                 || file.getNomeReal().toLowerCase().endsWith(".avi") || file.getNomeReal().toLowerCase().endsWith(".mkv")){
             Picasso.get().load(R.raw.filevideo).into(holder.logoFile);
-            holder.viewFile.setVisibility(View.INVISIBLE);
         }else{
             Picasso.get().load(R.raw.filedoc).into(holder.logoFile);
         }
     }
 
-    private  void configurarDialog(String link){
+    @SuppressLint("ResourceType")
+    private  void configurarDialog(String link, String filename){
         AlertDialog.Builder b = new AlertDialog.Builder(c);
         b.setTitle("Visualização do Arquivo:");
         LayoutExibirFileBinding exibirFileBinding = LayoutExibirFileBinding.inflate(c.getLayoutInflater());
-        Picasso.get().load(link).into(exibirFileBinding.imageView);
+
+        if (filename.toLowerCase().endsWith(".png") || filename.toLowerCase().endsWith(".jpg")
+                || filename.toLowerCase().endsWith(".jpeg") || filename.toLowerCase().endsWith(".gif")
+                || filename.toLowerCase().endsWith(".bmp")) {
+
+            Picasso.get().load(link).into(exibirFileBinding.imageView);
+        }else if (filename.toLowerCase().endsWith(".mp4") || filename.toLowerCase().endsWith(".3gp")
+                || filename.toLowerCase().endsWith(".avi") || filename.toLowerCase().endsWith(".mkv")){
+
+            Picasso.get().load(R.raw.noviewfile).into(exibirFileBinding.imageView);
+        }else{
+            Picasso.get().load(R.raw.noviewfile).into(exibirFileBinding.imageView);
+        }
+
+
         exibirFileBinding.fechaBtn.setOnClickListener( fecharView -> dialogExibir.dismiss());
         b.setView(exibirFileBinding.getRoot());
         dialogExibir = b.create();

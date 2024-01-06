@@ -1,6 +1,6 @@
 package benicio.solucoes.baratotarefas.model;
 
-public class FileModel {
+public class FileModel{
     String nomeReal, nomeBancoDeDados, nomeExibicao, idTarefa;
     String fileLink;
 

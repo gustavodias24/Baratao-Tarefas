@@ -24,7 +24,7 @@
         android:backgroundTint="#00FF0000"
         android:scaleType="centerInside"
         android:src="@raw/viewicon"
-        android:visibility="invisible" />
+        android:visibility="visible" />
 
     <ImageButton
         android:id="@+id/downloadFile"

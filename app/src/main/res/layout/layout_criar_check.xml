@@ -37,4 +37,32 @@
         android:text="CADASTRAR"
         android:textAllCaps="true"
         android:textStyle="bold" />
+
+    <Button
+        android:id="@+id/enviarArquivoInCheck"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:layout_weight="0"
+        android:backgroundTint="@color/verde"
+        android:isScrollContainer="false"
+        android:paddingTop="16dp"
+        android:paddingBottom="16dp"
+        android:pointerIcon="cell"
+        android:text="Arquivos"
+        android:textAllCaps="true"
+        android:textColor="#FFFFFF"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        app:icon="@drawable/baseline_insert_drive_file_24"
+        app:iconGravity="textEnd"
+        app:iconTint="#FFFFFF"
+        app:iconTintMode="src_in" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerFileInCheck"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#FF0000"
+        android:backgroundTint="#C3C5C6" />
 </LinearLayout>

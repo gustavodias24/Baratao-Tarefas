@@ -9,46 +9,68 @@
     android:orientation="horizontal"
     android:padding="8dp">
 
-    <ImageButton
-        android:id="@+id/removeCheck"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_weight="0"
-        android:backgroundTint="#00FF0000"
-        android:scaleType="centerInside"
-        android:src="@raw/closeicon" />
-
-    <ImageButton
-        android:id="@+id/editCheck"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_weight="0"
-        android:backgroundTint="#00FF0000"
-        android:scaleType="centerInside"
-        android:src="@raw/editicon" />
-
-    <RadioButton
-        android:id="@+id/radioCheck"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_weight="0"
-        android:checked="false"
-        android:gravity="center"
-        android:textColor="#000000"
-        android:textColorHighlight="#66B2FF "
-        android:textColorHint="#66B2FF "
-        android:textColorLink="#66B2FF " />
+        android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/nomeCheckText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_weight="0"
-        android:text="Nome da tarefa para checar"
-        android:textColor="#000000"
-        android:textSize="14sp"
-        android:textStyle="bold" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="horizontal">
+
+            <ImageButton
+                android:id="@+id/removeCheck"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_weight="0"
+                android:backgroundTint="#00FF0000"
+                android:scaleType="centerInside"
+                android:src="@raw/closeicon" />
+
+            <ImageButton
+                android:id="@+id/editCheck"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_weight="0"
+                android:backgroundTint="#00FF0000"
+                android:scaleType="centerInside"
+                android:src="@raw/editicon" />
+
+            <RadioButton
+                android:id="@+id/radioCheck"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_weight="0"
+                android:checked="false"
+                android:gravity="center"
+                android:textColor="#000000"
+                android:textColorHighlight="#66B2FF "
+                android:textColorHint="#66B2FF "
+                android:textColorLink="#66B2FF " />
+
+            <TextView
+                android:id="@+id/nomeCheckText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_weight="0"
+                android:text="Nome da tarefa para checar"
+                android:textColor="#000000"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerCheckFilesExibicao"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="#FF0000"
+            android:backgroundTint="#C3C5C6" />
+    </LinearLayout>
 
 </LinearLayout>

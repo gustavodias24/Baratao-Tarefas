@@ -1,16 +1,38 @@
 package benicio.solucoes.baratotarefas.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class CheckModel {
-    String id, checkNome;
+    String id, idTarefa, checkNome;
     Boolean isChecked;
+
+    List<FileModel> filesDoCheck = new ArrayList<>();
 
     public CheckModel() {
     }
 
-    public CheckModel(String id, String checkNome, Boolean isChecked) {
+    public CheckModel(String id, String idTarefa, String checkNome, Boolean isChecked) {
         this.id = id;
+        this.idTarefa = idTarefa;
         this.checkNome = checkNome;
         this.isChecked = isChecked;
+    }
+
+    public String getIdTarefa() {
+        return idTarefa;
+    }
+
+    public void setIdTarefa(String idTarefa) {
+        this.idTarefa = idTarefa;
+    }
+
+    public List<FileModel> getfilesDoCheck() {
+        return filesDoCheck;
+    }
+
+    public void setfilesDoCheck(List<FileModel> filesDoCheck) {
+        this.filesDoCheck = filesDoCheck;
     }
 
     public void setId(String id) {
