@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
@@ -19,6 +20,13 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -29,14 +37,23 @@ import java.util.UUID;
 
 import benicio.solucoes.baratotarefas.adapter.AdapterArquivos;
 import benicio.solucoes.baratotarefas.adapter.AdapterChecks;
+import benicio.solucoes.baratotarefas.adapter.AdapterUsuarios;
 import benicio.solucoes.baratotarefas.databinding.ActivityCadastroBinding;
 import benicio.solucoes.baratotarefas.databinding.ActivityCriacaoTarefaBinding;
 import benicio.solucoes.baratotarefas.databinding.LayoutCriarCheckBinding;
+import benicio.solucoes.baratotarefas.databinding.LayoutExibirUsersBinding;
 import benicio.solucoes.baratotarefas.databinding.LoadingScreenBinding;
 import benicio.solucoes.baratotarefas.model.CheckModel;
 import benicio.solucoes.baratotarefas.model.FileModel;
+import benicio.solucoes.baratotarefas.model.UserModel;
 
 public class CriacaoTarefaActivity extends AppCompatActivity {
+
+    private FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+    private DatabaseReference refUsers = FirebaseDatabase.getInstance().getReference().child("usuarios");
+    List<UserModel> listaDeUsuariosParaSelecionar = new ArrayList<>();
+    AdapterUsuarios adapterUsuariosSelecioanr;
+
 
     private List<FileModel> listaDeArquivosDoCheck = new ArrayList<>();
     private AdapterArquivos adapterFilesCheck;
@@ -46,7 +63,7 @@ public class CriacaoTarefaActivity extends AppCompatActivity {
 
     private String idTarefa;
     private StorageReference filesTarefa;
-    private Dialog dialogCarregando, dialogCriarCheck;
+    private Dialog dialogCarregando, dialogCriarCheck, dialogExibirPessoalResponsavel;
     private ActivityCriacaoTarefaBinding mainBinding;
 
     private RecyclerView recyclerFiles;
@@ -57,6 +74,7 @@ public class CriacaoTarefaActivity extends AppCompatActivity {
     private AdapterChecks adapterChecks;
     private List<CheckModel> listaCheck = new ArrayList<>();
 
+    @SuppressLint("NotifyDataSetChanged")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -73,9 +91,7 @@ public class CriacaoTarefaActivity extends AppCompatActivity {
 
         configurarDialogCarregando();
 
-        mainBinding.enviarArquivo.setOnClickListener( view -> {
-            openFilePicker(REQUEST_PICK_FILE);
-        });
+        mainBinding.enviarArquivo.setOnClickListener( view -> openFilePicker(REQUEST_PICK_FILE));
 
         mainBinding.adicionarCheck.setOnClickListener( view -> {
             dialogCriarCheck.show();
@@ -83,13 +99,63 @@ public class CriacaoTarefaActivity extends AppCompatActivity {
             adapterFilesCheck.notifyDataSetChanged();
         });
 
+        mainBinding.procurarResponsavel.setOnClickListener( view -> {
+            dialogCarregando.show();
+            refUsers.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    listaDeUsuariosParaSelecionar.clear();
+
+                    if (snapshot.exists()){
+                        for ( DataSnapshot dado: snapshot.getChildren()){
+                            UserModel usuarioBdAdicioanr = dado.getValue(UserModel.class);
+                            if( user.getEmail() != null && !user.getEmail().isEmpty()){
+                                if ( user.getEmail().equals(usuarioBdAdicioanr.getEmail())){
+                                    usuarioBdAdicioanr.setNome("Você");
+                                }
+                            }
+                            listaDeUsuariosParaSelecionar.add(usuarioBdAdicioanr);
+                        }
+                        adapterUsuariosSelecioanr.notifyDataSetChanged();
+                    }
+
+                    dialogExibirPessoalResponsavel.show();
+                    dialogCarregando.dismiss();
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+                    dialogCarregando.dismiss();
+                    Toast.makeText(CriacaoTarefaActivity.this, "Problema de conexão!", Toast.LENGTH_SHORT).show();
+                }
+            });
+        });
+
         configurarRecyclerFiles();
         configurarRecyclerChecks();
         configurarDialogCriarCheck();
+        configurarDialogSelecionarPessoalResponsavel();
     }
 
 
-
+    private void configurarDialogSelecionarPessoalResponsavel(){
+        AlertDialog.Builder b = new AlertDialog.Builder(this);
+        LayoutExibirUsersBinding usersBinding = LayoutExibirUsersBinding.inflate(getLayoutInflater());
+        b.setTitle("Selecione os usuários:");
+        b.setPositiveButton("Fechar", (dialogInterface, i) -> {
+            dialogExibirPessoalResponsavel.dismiss();
+        });
+        //INICIO configurar recyclerExibicao dos usuarios
+        RecyclerView recyclerExibirUsuariosResposaveis = usersBinding.recyclerUsuarios;
+        recyclerExibirUsuariosResposaveis.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
+        recyclerExibirUsuariosResposaveis.setLayoutManager(new LinearLayoutManager(this));
+        recyclerExibirUsuariosResposaveis.setHasFixedSize(true);
+        adapterUsuariosSelecioanr = new AdapterUsuarios(listaDeUsuariosParaSelecionar, new ArrayList<>(), this);
+        recyclerExibirUsuariosResposaveis.setAdapter(adapterUsuariosSelecioanr);
+        //FIM configurar recyclerExibicao dos usuarios
+        b.setView(usersBinding.getRoot());
+        dialogExibirPessoalResponsavel = b.create();
+    }
     private void configurarDialogCarregando() {
         AlertDialog.Builder b = new AlertDialog.Builder(this);
         b.setCancelable(false);
