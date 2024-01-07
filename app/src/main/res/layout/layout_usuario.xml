@@ -13,6 +13,15 @@
         android:orientation="horizontal"
         android:padding="8dp">
 
+        <ImageButton
+            android:id="@+id/removeUserInRecycler"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:backgroundTint="#00FF0000"
+            android:scaleType="centerInside"
+            android:src="@raw/closeicon"
+            android:visibility="gone" />
+
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/profile_image_usuarios"
             android:layout_width="60dp"

@@ -54,6 +54,12 @@ public class CriacaoTarefaActivity extends AppCompatActivity {
     List<UserModel> listaDeUsuariosParaSelecionar = new ArrayList<>();
     AdapterUsuarios adapterUsuariosSelecioanr;
 
+    private List<UserModel> listaDeUsuariosReponsaveisSelecioados = new ArrayList<>();
+    private AdapterUsuarios adapterUsuariosResponsaveisSelecionados;
+    private RecyclerView recyclerUsuariosResponsavelSelecionados;
+
+
+
 
     private List<FileModel> listaDeArquivosDoCheck = new ArrayList<>();
     private AdapterArquivos adapterFilesCheck;
@@ -132,9 +138,19 @@ public class CriacaoTarefaActivity extends AppCompatActivity {
         });
 
         configurarRecyclerFiles();
+        configurarRecyclerResponsaveisSelecionados();
         configurarRecyclerChecks();
         configurarDialogCriarCheck();
         configurarDialogSelecionarPessoalResponsavel();
+    }
+
+    private void configurarRecyclerResponsaveisSelecionados() {
+        recyclerUsuariosResponsavelSelecionados = mainBinding.recyclerResponsavel;
+        recyclerUsuariosResponsavelSelecionados.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
+        recyclerUsuariosResponsavelSelecionados.setLayoutManager(new LinearLayoutManager(this));
+        recyclerUsuariosResponsavelSelecionados.setHasFixedSize(true);
+        adapterUsuariosResponsaveisSelecionados = new AdapterUsuarios(listaDeUsuariosReponsaveisSelecioados, this,true);
+        recyclerUsuariosResponsavelSelecionados.setAdapter(adapterUsuariosResponsaveisSelecionados);
     }
 
 
@@ -150,7 +166,7 @@ public class CriacaoTarefaActivity extends AppCompatActivity {
         recyclerExibirUsuariosResposaveis.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
         recyclerExibirUsuariosResposaveis.setLayoutManager(new LinearLayoutManager(this));
         recyclerExibirUsuariosResposaveis.setHasFixedSize(true);
-        adapterUsuariosSelecioanr = new AdapterUsuarios(listaDeUsuariosParaSelecionar, new ArrayList<>(), this);
+        adapterUsuariosSelecioanr = new AdapterUsuarios(listaDeUsuariosParaSelecionar, listaDeUsuariosReponsaveisSelecioados, this, adapterUsuariosResponsaveisSelecionados, false);
         recyclerExibirUsuariosResposaveis.setAdapter(adapterUsuariosSelecioanr);
         //FIM configurar recyclerExibicao dos usuarios
         b.setView(usersBinding.getRoot());

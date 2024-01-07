@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -25,11 +26,23 @@ public class AdapterUsuarios extends RecyclerView.Adapter<AdapterUsuarios.MyView
     List<UserModel> listaDeUsuariosSelecionados;
     Activity c;
 
+    AdapterUsuarios adapterUsuariosSelecionados;
 
-    public AdapterUsuarios(List<UserModel> listaDeUsuarios, List<UserModel> listaDeUsuariosSelecionados, Activity c) {
+    boolean exibicao;
+
+
+    public AdapterUsuarios(List<UserModel> listaDeUsuarios, List<UserModel> listaDeUsuariosSelecionados, Activity c, AdapterUsuarios adapterUsuariosSelecionados, boolean exibicao) {
         this.listaDeUsuarios = listaDeUsuarios;
         this.listaDeUsuariosSelecionados = listaDeUsuariosSelecionados;
         this.c = c;
+        this.adapterUsuariosSelecionados = adapterUsuariosSelecionados;
+        this.exibicao = exibicao;
+    }
+
+    public AdapterUsuarios(List<UserModel> listaDeUsuarios, Activity c, boolean exibicao) {
+        this.listaDeUsuarios = listaDeUsuarios;
+        this.c = c;
+        this.exibicao = exibicao;
     }
 
     @NonNull
@@ -46,12 +59,37 @@ public class AdapterUsuarios extends RecyclerView.Adapter<AdapterUsuarios.MyView
         Picasso.get().load(user.getLinkImageProfile()).into(holder.profileUser);
         holder.nomeUser.setText(user.getNome());
 
-        holder.itemView.getRootView().setOnClickListener(view -> {
-            listaDeUsuariosSelecionados.add(user);
-            listaDeUsuarios.remove(position);
-            Toast.makeText(c, "Usuário adicionado", Toast.LENGTH_SHORT).show();
-            this.notifyDataSetChanged();
-        });
+        if ( !exibicao ){
+            holder.itemView.getRootView().setOnClickListener(view -> {
+                boolean select = true;
+
+                for ( UserModel userJaSelecionado : listaDeUsuariosSelecionados){
+                    if ( userJaSelecionado.getEmail().equals(user.getEmail()) ){
+                        Toast.makeText(c, "Esse usuário já foi selecionado!", Toast.LENGTH_SHORT).show();
+                        select = false;
+                        break;
+                    }
+                }
+
+                if ( select ){
+                    listaDeUsuariosSelecionados.add(user);
+                    listaDeUsuarios.remove(position);
+                    Toast.makeText(c, "Usuário adicionado", Toast.LENGTH_SHORT).show();
+                    this.notifyDataSetChanged();
+                    adapterUsuariosSelecionados.notifyDataSetChanged();
+                }
+
+            });
+        }else{
+            holder.itemView.getRootView().setClickable(false);
+            holder.removeUser.setVisibility(View.VISIBLE);
+
+            holder.removeUser.setOnClickListener(view -> {
+                listaDeUsuarios.remove(position);
+                this.notifyDataSetChanged();
+            });
+        }
+
 
 
     }
@@ -65,10 +103,12 @@ public class AdapterUsuarios extends RecyclerView.Adapter<AdapterUsuarios.MyView
 
         CircleImageView profileUser;
         TextView nomeUser;
+        ImageButton removeUser;
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
             profileUser = itemView.findViewById(R.id.profile_image_usuarios);
             nomeUser = itemView.findViewById(R.id.nome_usuario_selecionar);
+            removeUser = itemView.findViewById(R.id.removeUserInRecycler);
 
         }
     }
