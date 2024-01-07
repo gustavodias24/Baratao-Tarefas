@@ -52,11 +52,21 @@ public class CriacaoTarefaActivity extends AppCompatActivity {
     private FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
     private DatabaseReference refUsers = FirebaseDatabase.getInstance().getReference().child("usuarios");
     List<UserModel> listaDeUsuariosParaSelecionar = new ArrayList<>();
-    AdapterUsuarios adapterUsuariosSelecioanr;
+    AdapterUsuarios adapterUsuariosSelecionaveis;
+   
+    
+    private AdapterUsuarios adapterUsuariosObservadorSelecionar;
+    private List<UserModel> listaDeUsuariosObservadoresSelecionados = new ArrayList<>();
 
-    private List<UserModel> listaDeUsuariosReponsaveisSelecioados = new ArrayList<>();
+    private AdapterUsuarios adapterObeservadoresSelecionados;
+    private RecyclerView recyclerObservadoresSelecionados;
+
+
+    private List<UserModel> listaDeUsuariosReponsaveisSelecionados = new ArrayList<>();
     private AdapterUsuarios adapterUsuariosResponsaveisSelecionados;
     private RecyclerView recyclerUsuariosResponsavelSelecionados;
+    
+    
 
 
 
@@ -69,7 +79,7 @@ public class CriacaoTarefaActivity extends AppCompatActivity {
 
     private String idTarefa;
     private StorageReference filesTarefa;
-    private Dialog dialogCarregando, dialogCriarCheck, dialogExibirPessoalResponsavel;
+    private Dialog dialogCarregando, dialogCriarCheck, dialogExibirPessoalResponsavel, dialogExibirSelecionarObservadores;
     private ActivityCriacaoTarefaBinding mainBinding;
 
     private RecyclerView recyclerFiles;
@@ -106,72 +116,114 @@ public class CriacaoTarefaActivity extends AppCompatActivity {
         });
 
         mainBinding.procurarResponsavel.setOnClickListener( view -> {
-            dialogCarregando.show();
-            refUsers.addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot snapshot) {
-                    listaDeUsuariosParaSelecionar.clear();
+            atualizarListaDeSelecaoDeUsuarios(dialogExibirPessoalResponsavel);
+        });
 
-                    if (snapshot.exists()){
-                        for ( DataSnapshot dado: snapshot.getChildren()){
-                            UserModel usuarioBdAdicioanr = dado.getValue(UserModel.class);
-                            if( user.getEmail() != null && !user.getEmail().isEmpty()){
-                                if ( user.getEmail().equals(usuarioBdAdicioanr.getEmail())){
-                                    usuarioBdAdicioanr.setNome("Você");
-                                }
-                            }
-                            listaDeUsuariosParaSelecionar.add(usuarioBdAdicioanr);
-                        }
-                        adapterUsuariosSelecioanr.notifyDataSetChanged();
-                    }
-
-                    dialogExibirPessoalResponsavel.show();
-                    dialogCarregando.dismiss();
-                }
-
-                @Override
-                public void onCancelled(@NonNull DatabaseError error) {
-                    dialogCarregando.dismiss();
-                    Toast.makeText(CriacaoTarefaActivity.this, "Problema de conexão!", Toast.LENGTH_SHORT).show();
-                }
-            });
+        mainBinding.procurarObservador.setOnClickListener(view -> {
+            atualizarListaDeSelecaoDeUsuarios(dialogExibirSelecionarObservadores);
         });
 
         configurarRecyclerFiles();
         configurarRecyclerResponsaveisSelecionados();
+        configurarRecyclerObservadoresSelecionados();
         configurarRecyclerChecks();
         configurarDialogCriarCheck();
-        configurarDialogSelecionarPessoalResponsavel();
+        configurarDialogSelecionarUsuario();
+        configurarDialogSelecionarObservadores();
     }
 
+    private void atualizarListaDeSelecaoDeUsuarios(Dialog dialogParaAbrir){
+        dialogCarregando.show();
+        refUsers.addListenerForSingleValueEvent(new ValueEventListener() {
+            @SuppressLint("NotifyDataSetChanged")
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                listaDeUsuariosParaSelecionar.clear();
+
+                if (snapshot.exists()){
+                    for ( DataSnapshot dado: snapshot.getChildren()){
+                        UserModel usuarioBdAdicioanr = dado.getValue(UserModel.class);
+                        if( user.getEmail() != null && !user.getEmail().isEmpty()){
+                            if ( user.getEmail().equals(usuarioBdAdicioanr.getEmail())){
+                                usuarioBdAdicioanr.setNome("Você");
+                            }
+                        }
+                        listaDeUsuariosParaSelecionar.add(usuarioBdAdicioanr);
+                    }
+                    adapterUsuariosSelecionaveis.notifyDataSetChanged();
+                }
+
+                dialogParaAbrir.show();
+                dialogCarregando.dismiss();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                dialogCarregando.dismiss();
+                Toast.makeText(CriacaoTarefaActivity.this, "Problema de conexão!", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
     private void configurarRecyclerResponsaveisSelecionados() {
         recyclerUsuariosResponsavelSelecionados = mainBinding.recyclerResponsavel;
         recyclerUsuariosResponsavelSelecionados.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
         recyclerUsuariosResponsavelSelecionados.setLayoutManager(new LinearLayoutManager(this));
         recyclerUsuariosResponsavelSelecionados.setHasFixedSize(true);
-        adapterUsuariosResponsaveisSelecionados = new AdapterUsuarios(listaDeUsuariosReponsaveisSelecioados, this,true);
+        adapterUsuariosResponsaveisSelecionados = new AdapterUsuarios(listaDeUsuariosReponsaveisSelecionados, this,true);
         recyclerUsuariosResponsavelSelecionados.setAdapter(adapterUsuariosResponsaveisSelecionados);
     }
 
+    private void configurarRecyclerObservadoresSelecionados() {
+        recyclerObservadoresSelecionados = mainBinding.recyclerObservadores;
+        recyclerObservadoresSelecionados.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
+        recyclerObservadoresSelecionados.setLayoutManager(new LinearLayoutManager(this));
+        recyclerObservadoresSelecionados.setHasFixedSize(true);
+        adapterObeservadoresSelecionados = new AdapterUsuarios(listaDeUsuariosObservadoresSelecionados, this,true);
+        recyclerObservadoresSelecionados.setAdapter(adapterObeservadoresSelecionados);
+    }
 
-    private void configurarDialogSelecionarPessoalResponsavel(){
+
+    private void configurarDialogSelecionarUsuario(){
         AlertDialog.Builder b = new AlertDialog.Builder(this);
         LayoutExibirUsersBinding usersBinding = LayoutExibirUsersBinding.inflate(getLayoutInflater());
-        b.setTitle("Selecione os usuários:");
+        b.setTitle("Selecione os Responsáveis:");
         b.setPositiveButton("Fechar", (dialogInterface, i) -> {
             dialogExibirPessoalResponsavel.dismiss();
         });
         //INICIO configurar recyclerExibicao dos usuarios
-        RecyclerView recyclerExibirUsuariosResposaveis = usersBinding.recyclerUsuarios;
-        recyclerExibirUsuariosResposaveis.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
-        recyclerExibirUsuariosResposaveis.setLayoutManager(new LinearLayoutManager(this));
-        recyclerExibirUsuariosResposaveis.setHasFixedSize(true);
-        adapterUsuariosSelecioanr = new AdapterUsuarios(listaDeUsuariosParaSelecionar, listaDeUsuariosReponsaveisSelecioados, this, adapterUsuariosResponsaveisSelecionados, false);
-        recyclerExibirUsuariosResposaveis.setAdapter(adapterUsuariosSelecioanr);
+        RecyclerView recyclerExibirUsuariosSelecionaveis = usersBinding.recyclerUsuarios;
+        recyclerExibirUsuariosSelecionaveis.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
+        recyclerExibirUsuariosSelecionaveis.setLayoutManager(new LinearLayoutManager(this));
+        recyclerExibirUsuariosSelecionaveis.setHasFixedSize(true);
+        adapterUsuariosSelecionaveis = new AdapterUsuarios(listaDeUsuariosParaSelecionar, listaDeUsuariosReponsaveisSelecionados, this, adapterUsuariosResponsaveisSelecionados, false);
+        recyclerExibirUsuariosSelecionaveis.setAdapter(adapterUsuariosSelecionaveis);
         //FIM configurar recyclerExibicao dos usuarios
         b.setView(usersBinding.getRoot());
         dialogExibirPessoalResponsavel = b.create();
     }
+
+
+    private void configurarDialogSelecionarObservadores(){
+        AlertDialog.Builder b = new AlertDialog.Builder(this);
+        LayoutExibirUsersBinding usersBinding = LayoutExibirUsersBinding.inflate(getLayoutInflater());
+        b.setTitle("Selecione os Observadores:");
+        b.setPositiveButton("Fechar", (dialogInterface, i) -> {
+            dialogExibirSelecionarObservadores.dismiss();
+        });
+        //INICIO configurar recyclerExibicao dos usuarios
+        RecyclerView recyclerExibirUsuariosObservadores = usersBinding.recyclerUsuarios;
+        recyclerExibirUsuariosObservadores.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
+        recyclerExibirUsuariosObservadores.setLayoutManager(new LinearLayoutManager(this));
+        recyclerExibirUsuariosObservadores.setHasFixedSize(true);
+        adapterUsuariosObservadorSelecionar = new AdapterUsuarios(listaDeUsuariosParaSelecionar, listaDeUsuariosObservadoresSelecionados, this, adapterObeservadoresSelecionados, false);
+        recyclerExibirUsuariosObservadores.setAdapter(adapterUsuariosObservadorSelecionar);
+        //FIM configurar recyclerExibicao dos usuarios
+        b.setView(usersBinding.getRoot());
+        dialogExibirSelecionarObservadores = b.create();
+    }
+    
+    
+    
     private void configurarDialogCarregando() {
         AlertDialog.Builder b = new AlertDialog.Builder(this);
         b.setCancelable(false);
