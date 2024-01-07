@@ -6,12 +6,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -56,7 +58,24 @@ public class AdapterUsuarios extends RecyclerView.Adapter<AdapterUsuarios.MyView
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
         UserModel user = listaDeUsuarios.get(position);
 
-        Picasso.get().load(user.getLinkImageProfile()).into(holder.profileUser);
+        holder.profileUser.setVisibility(View.GONE);
+        holder.progressProfilePhoto.setVisibility(View.VISIBLE);
+        Picasso.get().load(user.getLinkImageProfile()).into(holder.profileUser, new Callback() {
+            @Override
+            public void onSuccess() {
+                holder.profileUser.setVisibility(View.VISIBLE);
+                holder.progressProfilePhoto.setVisibility(View.GONE);
+            }
+
+            @SuppressLint("ResourceType")
+            @Override
+            public void onError(Exception e) {
+                holder.profileUser.setVisibility(View.VISIBLE);
+                holder.progressProfilePhoto.setVisibility(View.GONE);
+                Picasso.get().load(R.raw.notloading).into(holder.profileUser);
+            }
+        });
+
         holder.nomeUser.setText(user.getNome());
 
         if ( !exibicao ){
@@ -104,11 +123,13 @@ public class AdapterUsuarios extends RecyclerView.Adapter<AdapterUsuarios.MyView
         CircleImageView profileUser;
         TextView nomeUser;
         ImageButton removeUser;
+        ProgressBar progressProfilePhoto;
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
             profileUser = itemView.findViewById(R.id.profile_image_usuarios);
             nomeUser = itemView.findViewById(R.id.nome_usuario_selecionar);
             removeUser = itemView.findViewById(R.id.removeUserInRecycler);
+            progressProfilePhoto = itemView.findViewById(R.id.progressProdfilePhoto);
 
         }
     }

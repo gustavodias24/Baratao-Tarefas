@@ -48,7 +48,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
-                android:layout_weight="0"
                 android:backgroundTint="@color/verde"
                 android:isScrollContainer="false"
                 android:paddingTop="16dp"
@@ -64,9 +63,10 @@
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recyclerResponsavel"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:background="#FF0000"
-                android:backgroundTint="#C3C5C6" />
+                android:backgroundTint="#C3C5C6"
+                android:minHeight="100dp" />
         </LinearLayout>
 
         <TextView
@@ -89,7 +89,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
-                android:layout_weight="0"
                 android:backgroundTint="@color/verde"
                 android:isScrollContainer="false"
                 android:paddingTop="16dp"
@@ -104,9 +103,10 @@
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recyclerCheck"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:background="#FF0000"
-                android:backgroundTint="#C3C5C6" />
+                android:backgroundTint="#C3C5C6"
+                android:minHeight="100dp" />
         </LinearLayout>
 
         <com.google.android.material.textfield.TextInputLayout
@@ -115,7 +115,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
-            android:layout_weight="0"
             android:hint="Descrição"
             android:textColorHint="#000000"
             app:boxBackgroundColor="#FFFFFF"
@@ -142,7 +141,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
-                android:layout_weight="0"
                 android:backgroundTint="@color/verde"
                 android:isScrollContainer="false"
                 android:paddingTop="16dp"
@@ -160,13 +158,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="#FF0000"
-                android:backgroundTint="#C3C5C6" />
+                android:backgroundTint="#C3C5C6"
+                android:minHeight="100dp" />
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="0"
             android:orientation="vertical">
 
             <TextView
@@ -174,7 +172,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
-                android:layout_weight="0"
                 android:text="Adicionar Observadores"
                 android:textColor="#000000"
                 android:textSize="24sp"
@@ -185,7 +182,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
-                android:layout_weight="0"
                 android:backgroundTint="@color/verde"
                 android:isScrollContainer="false"
                 android:paddingTop="16dp"
@@ -203,7 +199,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="#FF0000"
-                android:backgroundTint="#C3C5C6" />
+                android:backgroundTint="#C3C5C6"
+                android:minHeight="100dp" />
         </LinearLayout>
 
         <Button
@@ -211,7 +208,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:layout_weight="0"
             android:backgroundTint="@color/verde"
             android:text="CONCLUIR"
             android:textColor="#FFFFFF"

@@ -52,10 +52,11 @@ public class CriacaoTarefaActivity extends AppCompatActivity {
     private FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
     private DatabaseReference refUsers = FirebaseDatabase.getInstance().getReference().child("usuarios");
     List<UserModel> listaDeUsuariosParaSelecionar = new ArrayList<>();
+    List<UserModel> listaDeUsuariosParaSelecionarObservadores = new ArrayList<>();
     AdapterUsuarios adapterUsuariosSelecionaveis;
-   
+    AdapterUsuarios adapterUsuariosSelecionaveisObservadores;
+
     
-    private AdapterUsuarios adapterUsuariosObservadorSelecionar;
     private List<UserModel> listaDeUsuariosObservadoresSelecionados = new ArrayList<>();
 
     private AdapterUsuarios adapterObeservadoresSelecionados;
@@ -128,7 +129,8 @@ public class CriacaoTarefaActivity extends AppCompatActivity {
         configurarRecyclerObservadoresSelecionados();
         configurarRecyclerChecks();
         configurarDialogCriarCheck();
-        configurarDialogSelecionarUsuario();
+        configurarDialogSelecionarResponsaveis();
+//        configurarDialogSelecionarUsuario();
         configurarDialogSelecionarObservadores();
     }
 
@@ -139,6 +141,7 @@ public class CriacaoTarefaActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 listaDeUsuariosParaSelecionar.clear();
+                listaDeUsuariosParaSelecionarObservadores.clear();
 
                 if (snapshot.exists()){
                     for ( DataSnapshot dado: snapshot.getChildren()){
@@ -149,8 +152,10 @@ public class CriacaoTarefaActivity extends AppCompatActivity {
                             }
                         }
                         listaDeUsuariosParaSelecionar.add(usuarioBdAdicioanr);
+                        listaDeUsuariosParaSelecionarObservadores.add(usuarioBdAdicioanr);
                     }
                     adapterUsuariosSelecionaveis.notifyDataSetChanged();
+                    adapterUsuariosSelecionaveisObservadores.notifyDataSetChanged();
                 }
 
                 dialogParaAbrir.show();
@@ -183,7 +188,7 @@ public class CriacaoTarefaActivity extends AppCompatActivity {
     }
 
 
-    private void configurarDialogSelecionarUsuario(){
+    private void configurarDialogSelecionarResponsaveis(){
         AlertDialog.Builder b = new AlertDialog.Builder(this);
         LayoutExibirUsersBinding usersBinding = LayoutExibirUsersBinding.inflate(getLayoutInflater());
         b.setTitle("Selecione os Responsáveis:");
@@ -215,8 +220,8 @@ public class CriacaoTarefaActivity extends AppCompatActivity {
         recyclerExibirUsuariosObservadores.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
         recyclerExibirUsuariosObservadores.setLayoutManager(new LinearLayoutManager(this));
         recyclerExibirUsuariosObservadores.setHasFixedSize(true);
-        adapterUsuariosObservadorSelecionar = new AdapterUsuarios(listaDeUsuariosParaSelecionar, listaDeUsuariosObservadoresSelecionados, this, adapterObeservadoresSelecionados, false);
-        recyclerExibirUsuariosObservadores.setAdapter(adapterUsuariosObservadorSelecionar);
+        adapterUsuariosSelecionaveisObservadores = new AdapterUsuarios(listaDeUsuariosParaSelecionarObservadores, listaDeUsuariosObservadoresSelecionados, this, adapterObeservadoresSelecionados, false);
+        recyclerExibirUsuariosObservadores.setAdapter(adapterUsuariosSelecionaveisObservadores);
         //FIM configurar recyclerExibicao dos usuarios
         b.setView(usersBinding.getRoot());
         dialogExibirSelecionarObservadores = b.create();
