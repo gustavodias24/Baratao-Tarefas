@@ -37,6 +37,9 @@ android {
 }
 
 dependencies {
+
+    implementation("io.github.vicmikhailau:MaskedEditText:5.0.1")
+
     implementation(platform("com.google.firebase:firebase-bom:32.7.0"))
     implementation("com.google.firebase:firebase-analytics")
 

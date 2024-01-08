@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -19,6 +20,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
@@ -105,7 +107,22 @@ public class AdapterArquivos extends RecyclerView.Adapter<AdapterArquivos.MyView
                 || filename.toLowerCase().endsWith(".jpeg") || filename.toLowerCase().endsWith(".gif")
                 || filename.toLowerCase().endsWith(".bmp")) {
 
-            Picasso.get().load(link).into(exibirFileBinding.imageView);
+            exibirFileBinding.progressViewFile.setVisibility(View.VISIBLE);
+            exibirFileBinding.imageView.setVisibility(View.GONE);
+
+            Picasso.get().load(link).into(exibirFileBinding.imageView, new Callback() {
+                @Override
+                public void onSuccess() {
+                    exibirFileBinding.progressViewFile.setVisibility(View.GONE);
+                    exibirFileBinding.imageView.setVisibility(View.VISIBLE);
+                }
+
+                @Override
+                public void onError(Exception e) {
+                    exibirFileBinding.progressViewFile.setVisibility(View.GONE);
+                    Picasso.get().load(R.raw.noviewfile).into(exibirFileBinding.imageView);
+                }
+            });
         }else if (filename.toLowerCase().endsWith(".mp4") || filename.toLowerCase().endsWith(".3gp")
                 || filename.toLowerCase().endsWith(".avi") || filename.toLowerCase().endsWith(".mkv")){
 

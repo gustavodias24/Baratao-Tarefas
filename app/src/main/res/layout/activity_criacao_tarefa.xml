@@ -203,6 +203,41 @@
                 android:minHeight="100dp" />
         </LinearLayout>
 
+        <TextView
+            android:id="@+id/textView5"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="Adicionar Prazo"
+            android:textColor="#000000"
+            android:textSize="24sp"
+            android:textStyle="bold" />
+
+        <CalendarView
+            android:id="@+id/calendarView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/textView6"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Hora de 00:00 até 23:59" />
+
+        <com.vicmikhailau.maskededittext.MaskedEditText
+            android:id="@+id/tempoField"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#FFFFFF"
+            android:hint="Tempo"
+            android:inputType="datetime|time"
+            android:paddingStart="16dp"
+            android:paddingTop="24dp"
+            android:paddingEnd="16dp"
+            android:paddingBottom="24dp"
+            android:textColor="#000000"
+            app:mask="##:##" />
+
         <Button
             android:id="@+id/concluir"
             android:layout_width="match_parent"

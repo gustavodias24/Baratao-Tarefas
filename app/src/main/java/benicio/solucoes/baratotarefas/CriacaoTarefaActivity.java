@@ -18,6 +18,7 @@ import android.os.Bundle;
 import android.provider.OpenableColumns;
 import android.util.Log;
 import android.view.MenuItem;
+import android.widget.CalendarView;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -31,8 +32,12 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.UUID;
 
 import benicio.solucoes.baratotarefas.adapter.AdapterArquivos;
@@ -91,6 +96,8 @@ public class CriacaoTarefaActivity extends AppCompatActivity {
     private AdapterChecks adapterChecks;
     private List<CheckModel> listaCheck = new ArrayList<>();
 
+    private String dataPrazo = "";
+
     @SuppressLint("NotifyDataSetChanged")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -116,12 +123,25 @@ public class CriacaoTarefaActivity extends AppCompatActivity {
             adapterFilesCheck.notifyDataSetChanged();
         });
 
+        Date date = new Date();
+        @SuppressLint("SimpleDateFormat") DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+        dataPrazo = dateFormat.format(date.getTime());
         mainBinding.procurarResponsavel.setOnClickListener( view -> {
             atualizarListaDeSelecaoDeUsuarios(dialogExibirPessoalResponsavel);
         });
 
         mainBinding.procurarObservador.setOnClickListener(view -> {
             atualizarListaDeSelecaoDeUsuarios(dialogExibirSelecionarObservadores);
+        });
+
+        mainBinding.calendarView.setOnDateChangeListener((calendarView, i, i1, i2) -> {
+            String formattedMonth = String.format(Locale.getDefault(), "%02d", i1 + 1);
+            String formattedDay = String.format(Locale.getDefault(), "%02d", i2);
+            dataPrazo = formattedDay + "/" + formattedMonth  + "/"  + i;
+        });
+
+        mainBinding.concluir.setOnClickListener( view -> {
+            Log.d("mayara", "onCreate: " + dataPrazo);
         });
 
         configurarRecyclerFiles();
