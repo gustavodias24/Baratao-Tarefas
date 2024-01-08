@@ -46,6 +46,7 @@ import benicio.solucoes.baratotarefas.adapter.AdapterUsuarios;
 import benicio.solucoes.baratotarefas.databinding.ActivityCadastroBinding;
 import benicio.solucoes.baratotarefas.databinding.ActivityCriacaoTarefaBinding;
 import benicio.solucoes.baratotarefas.databinding.LayoutCriarCheckBinding;
+import benicio.solucoes.baratotarefas.databinding.LayoutCriarSubCheckBinding;
 import benicio.solucoes.baratotarefas.databinding.LayoutExibirUsersBinding;
 import benicio.solucoes.baratotarefas.databinding.LoadingScreenBinding;
 import benicio.solucoes.baratotarefas.model.CheckModel;
@@ -78,14 +79,17 @@ public class CriacaoTarefaActivity extends AppCompatActivity {
 
 
     private List<FileModel> listaDeArquivosDoCheck = new ArrayList<>();
+    private List<CheckModel> listaDeSubChecks = new ArrayList<>();
     private AdapterArquivos adapterFilesCheck;
+    private AdapterChecks adapterSubCheck;
 
     private static final int REQUEST_PICK_FILE = 1;
     private static final int REQUEST_PICK_FILE_IN_CHECK = 2;
 
     private String idTarefa;
     private StorageReference filesTarefa;
-    private Dialog dialogCarregando, dialogCriarCheck, dialogExibirPessoalResponsavel, dialogExibirSelecionarObservadores;
+    private Dialog dialogCarregando, dialogCriarCheck, dialogExibirPessoalResponsavel,
+            dialogExibirSelecionarObservadores, dialogSubCheck;
     private ActivityCriacaoTarefaBinding mainBinding;
 
     private RecyclerView recyclerFiles;
@@ -120,6 +124,7 @@ public class CriacaoTarefaActivity extends AppCompatActivity {
         mainBinding.adicionarCheck.setOnClickListener( view -> {
             dialogCriarCheck.show();
             listaDeArquivosDoCheck.clear();
+            listaDeSubChecks.clear();
             adapterFilesCheck.notifyDataSetChanged();
         });
 
@@ -152,6 +157,7 @@ public class CriacaoTarefaActivity extends AppCompatActivity {
         configurarDialogSelecionarResponsaveis();
 //        configurarDialogSelecionarUsuario();
         configurarDialogSelecionarObservadores();
+        configurarDialogSubCheck();
     }
 
     private void atualizarListaDeSelecaoDeUsuarios(Dialog dialogParaAbrir){
@@ -378,8 +384,33 @@ public class CriacaoTarefaActivity extends AppCompatActivity {
         recyclerChecks.setLayoutManager(new LinearLayoutManager(this));
         recyclerChecks.setHasFixedSize(true);
         recyclerChecks.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
-        adapterChecks = new AdapterChecks(this, listaCheck, dialogCarregando);
+        adapterChecks = new AdapterChecks(this, listaCheck, dialogCarregando, false);
         recyclerChecks.setAdapter(adapterChecks);
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    private void configurarDialogSubCheck(){
+        AlertDialog.Builder b = new AlertDialog.Builder(this);
+        b.setTitle("Adicionar um Sub Check");
+        LayoutCriarSubCheckBinding subCheckBinding = LayoutCriarSubCheckBinding.inflate(getLayoutInflater());
+        subCheckBinding.cadastrarCheckBtn.setOnClickListener(view -> {
+            String nomeSubCheck = subCheckBinding.nomeCheckField.getEditText().getText().toString();
+            if ( nomeSubCheck.isEmpty() ) {
+                Toast.makeText(this, "Escreva Algo no Sub Check!", Toast.LENGTH_SHORT).show();
+            }else{
+                String checkId = UUID.randomUUID().toString();
+
+                listaDeSubChecks.add(new CheckModel(
+                        checkId, idTarefa, nomeSubCheck, false
+                ));
+
+                adapterSubCheck.notifyDataSetChanged();
+                subCheckBinding.nomeCheckField.getEditText().setText("");
+                dialogSubCheck.dismiss();
+            }
+        });
+        b.setView(subCheckBinding.getRoot());
+        dialogSubCheck = b.create();
     }
 
     @SuppressLint("NotifyDataSetChanged")
@@ -387,6 +418,15 @@ public class CriacaoTarefaActivity extends AppCompatActivity {
         AlertDialog.Builder b = new AlertDialog.Builder(this);
         b.setTitle("Adicionar um Check");
         LayoutCriarCheckBinding checkBinding = LayoutCriarCheckBinding.inflate(getLayoutInflater());
+
+
+        checkBinding.recyclerSubChecks.setHasFixedSize(true);
+        checkBinding.recyclerSubChecks.setLayoutManager(new LinearLayoutManager(this));
+        checkBinding.recyclerSubChecks.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
+        adapterSubCheck = new AdapterChecks(this, listaDeSubChecks, dialogCarregando, true);
+        checkBinding.recyclerSubChecks.setAdapter(adapterSubCheck);
+
+        checkBinding.criarSubCheck.setOnClickListener( view -> dialogSubCheck.show());
 
         checkBinding.recyclerFileInCheck.setHasFixedSize(true);
         checkBinding.recyclerFileInCheck.setLayoutManager(new LinearLayoutManager(this));
@@ -396,7 +436,6 @@ public class CriacaoTarefaActivity extends AppCompatActivity {
 
         checkBinding.enviarArquivoInCheck.setOnClickListener( view -> {
             openFilePicker(REQUEST_PICK_FILE_IN_CHECK);
-
         });
 
         checkBinding.cadastrarCheckBtn.setOnClickListener( view -> {
@@ -413,6 +452,8 @@ public class CriacaoTarefaActivity extends AppCompatActivity {
                 );
 
                 novoCheck.getfilesDoCheck().addAll(listaDeArquivosDoCheck);
+
+                novoCheck.getSubChecks().addAll(listaDeSubChecks);
 
                 listaCheck.add(novoCheck);
                 adapterChecks.notifyDataSetChanged();

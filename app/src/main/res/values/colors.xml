@@ -4,4 +4,6 @@
     <color name="white">#FFFFFFFF</color>
     <color name="amarelo">#FECB01</color>
     <color name="verde">#166430</color>
+    <color name="ciano">#70CFFF</color>
+    <color name="laranja">#FFA500 </color>
 </resources>

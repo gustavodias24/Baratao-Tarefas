@@ -4,6 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_margin="8dp"
+    android:background="@color/laranja"
     android:orientation="horizontal"
     android:padding="8dp">
 
@@ -11,6 +13,7 @@
         android:id="@+id/removeFile"
         android:layout_width="50dp"
         android:layout_height="50dp"
+        android:layout_gravity="center"
         android:layout_weight="0"
         android:backgroundTint="#00FF0000"
         android:scaleType="centerInside"
@@ -20,6 +23,7 @@
         android:id="@+id/viewFile"
         android:layout_width="50dp"
         android:layout_height="50dp"
+        android:layout_gravity="center"
         android:layout_weight="0"
         android:backgroundTint="#00FF0000"
         android:scaleType="centerInside"
@@ -30,6 +34,7 @@
         android:id="@+id/downloadFile"
         android:layout_width="50dp"
         android:layout_height="50dp"
+        android:layout_gravity="center"
         android:layout_marginEnd="8dp"
         android:layout_weight="0"
         android:backgroundTint="#00FF0000"
@@ -52,6 +57,7 @@
         android:layout_marginStart="8dp"
         android:layout_weight="0"
         android:text="nome do arquivo.extensao"
-        android:textColor="#000000" />
+        android:textColor="#000000"
+        android:textSize="11sp" />
 
 </LinearLayout>

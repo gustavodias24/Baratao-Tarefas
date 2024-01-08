@@ -8,6 +8,7 @@ public class CheckModel {
     Boolean isChecked;
 
     List<FileModel> filesDoCheck = new ArrayList<>();
+    List<CheckModel> subChecks = new ArrayList<>();
 
     public CheckModel() {
     }
@@ -17,6 +18,22 @@ public class CheckModel {
         this.idTarefa = idTarefa;
         this.checkNome = checkNome;
         this.isChecked = isChecked;
+    }
+
+    public List<FileModel> getFilesDoCheck() {
+        return filesDoCheck;
+    }
+
+    public void setFilesDoCheck(List<FileModel> filesDoCheck) {
+        this.filesDoCheck = filesDoCheck;
+    }
+
+    public List<CheckModel> getSubChecks() {
+        return subChecks;
+    }
+
+    public void setSubChecks(List<CheckModel> subChecks) {
+        this.subChecks = subChecks;
     }
 
     public String getIdTarefa() {

@@ -28,10 +28,13 @@ public class AdapterChecks extends RecyclerView.Adapter<AdapterChecks.MyViewHold
     List<CheckModel> listaChecks;
     Dialog dialogCarregando;
 
-    public AdapterChecks(Activity c, List<CheckModel> listaChecks, Dialog dialogCarregando) {
+    boolean isSubCheck;
+
+    public AdapterChecks(Activity c, List<CheckModel> listaChecks, Dialog dialogCarregando, boolean isSubCheck) {
         this.c = c;
         this.listaChecks = listaChecks;
         this.dialogCarregando = dialogCarregando;
+        this.isSubCheck = isSubCheck;
     }
 
     @NonNull
@@ -45,6 +48,13 @@ public class AdapterChecks extends RecyclerView.Adapter<AdapterChecks.MyViewHold
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
         CheckModel check = listaChecks.get(position);
 
+
+        if ( isSubCheck ){
+            holder.editCheck.setVisibility(View.GONE);
+            holder.arquivosText.setVisibility(View.GONE);
+            holder.subChekcText.setVisibility(View.GONE);
+        }
+
         holder.itemView.getRootView().setClickable(false);
 
         holder.removeCheck.setOnClickListener(view -> {
@@ -53,15 +63,31 @@ public class AdapterChecks extends RecyclerView.Adapter<AdapterChecks.MyViewHold
         });
 
         holder.btnCheck.setOnClickListener(view -> {
-            check.setChecked(
-                    holder.btnCheck.isChecked()
-            );
+
+            if ( !check.getChecked() ){
+                check.setChecked(
+                        holder.btnCheck.isChecked()
+                );
+            }else{
+                holder.btnCheck.setChecked(false);
+                check.setChecked(
+                        holder.btnCheck.isChecked()
+                );
+            }
+
         });
 
         holder.nomeCheck.setText(
                 check.getCheckNome()
         );
 
+        if ( !check.getSubChecks().isEmpty() ){
+            holder.recyclerSubChecks.addItemDecoration(new DividerItemDecoration(c, DividerItemDecoration.VERTICAL));
+            holder.recyclerSubChecks.setHasFixedSize(true);
+            holder.recyclerSubChecks.setLayoutManager(new LinearLayoutManager(c));
+            AdapterChecks adapterSubChecks = new AdapterChecks(c, check.getSubChecks(), dialogCarregando, true);
+            holder.recyclerSubChecks.setAdapter(adapterSubChecks);
+        }
 
         if ( !check.getfilesDoCheck().isEmpty() ){
             holder.recyclerFiles.addItemDecoration(new DividerItemDecoration(c, DividerItemDecoration.VERTICAL));
@@ -73,6 +99,20 @@ public class AdapterChecks extends RecyclerView.Adapter<AdapterChecks.MyViewHold
 
     }
 
+    private Boolean veriificarTodosOsCheck(CheckModel check){
+        Boolean todosChecados = true;
+
+        if ( check.getSubChecks() != null && !check.getSubChecks().isEmpty()){
+            for ( CheckModel subChek : check.getSubChecks()){
+                if (!subChek.getChecked()){
+                    todosChecados = false;
+                    break;
+                }
+            }
+        }
+        return todosChecados;
+    }
+
     @Override
     public int getItemCount() {
         return listaChecks.size();
@@ -82,16 +122,21 @@ public class AdapterChecks extends RecyclerView.Adapter<AdapterChecks.MyViewHold
 
         RadioButton btnCheck;
         ImageButton removeCheck;
-        TextView nomeCheck;
+        ImageButton editCheck;
+        TextView nomeCheck, arquivosText, subChekcText;
 
-        RecyclerView recyclerFiles;
+        RecyclerView recyclerFiles, recyclerSubChecks;
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
 
             btnCheck = itemView.findViewById(R.id.radioCheck);
             removeCheck = itemView.findViewById(R.id.removeCheck);
+            editCheck = itemView.findViewById(R.id.editCheck);
             nomeCheck = itemView.findViewById(R.id.nomeCheckText);
             recyclerFiles = itemView.findViewById(R.id.recyclerCheckFilesExibicao);
+            recyclerSubChecks = itemView.findViewById(R.id.recyclerCheckSubCheckExibicao);
+            arquivosText = itemView.findViewById(R.id.textArquivosCheck);
+            subChekcText = itemView.findViewById(R.id.textSubChecks);
         }
     }
 }

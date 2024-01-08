@@ -1,6 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    >
+<LinearLayout
+
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -39,6 +46,33 @@
         android:textStyle="bold" />
 
     <Button
+        android:id="@+id/criarSubCheck"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:layout_weight="0"
+        android:backgroundTint="@color/verde"
+        android:isScrollContainer="false"
+        android:paddingTop="16dp"
+        android:paddingBottom="16dp"
+        android:pointerIcon="cell"
+        android:text="SUB CHECKS"
+        android:textAllCaps="true"
+        android:textColor="#FFFFFF"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        app:iconGravity="textEnd"
+        app:iconTint="#FFFFFF"
+        app:iconTintMode="src_in" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerSubChecks"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#FF0000"
+        android:backgroundTint="#C3C5C6" />
+
+    <Button
         android:id="@+id/enviarArquivoInCheck"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -64,5 +98,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="#FF0000"
-        android:backgroundTint="#C3C5C6" />
-</LinearLayout>
+        android:backgroundTint="#C3C5C6" >
+
+    </androidx.recyclerview.widget.RecyclerView>
+</LinearLayout></ScrollView>
