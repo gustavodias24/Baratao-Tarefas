@@ -8,12 +8,13 @@
     android:layout_marginTop="24dp"
     android:layout_marginEnd="8dp"
     android:layout_marginBottom="24dp"
-    android:background="#FFA500 "
+    android:background="@drawable/back_o_round"
     android:orientation="horizontal">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@drawable/back_o_round"
         android:orientation="vertical"
         android:padding="8dp">
 
@@ -80,8 +81,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginBottom="8dp"
-            android:background="#FF0000"
-            android:backgroundTint="@color/verde">
+            android:background="@drawable/back_g_round">
 
         </androidx.recyclerview.widget.RecyclerView>
 
@@ -98,8 +98,7 @@
             android:id="@+id/recyclerCheckFilesExibicao"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="#FF0000"
-            android:backgroundTint="@color/verde" />
+            android:background="@drawable/back_g_round" />
     </LinearLayout>
 
 </LinearLayout>

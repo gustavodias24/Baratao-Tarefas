@@ -65,14 +65,11 @@ public class AdapterChecks extends RecyclerView.Adapter<AdapterChecks.MyViewHold
         holder.btnCheck.setOnClickListener(view -> {
 
             if ( !check.getChecked() ){
-                check.setChecked(
-                        holder.btnCheck.isChecked()
-                );
+                holder.btnCheck.setChecked(true);
+                check.setChecked(true);
             }else{
                 holder.btnCheck.setChecked(false);
-                check.setChecked(
-                        holder.btnCheck.isChecked()
-                );
+                check.setChecked(false);
             }
 
         });

@@ -69,8 +69,7 @@
         android:id="@+id/recyclerSubChecks"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#FF0000"
-        android:backgroundTint="#C3C5C6" />
+        android:background="@drawable/back_r_round" />
 
     <Button
         android:id="@+id/enviarArquivoInCheck"
@@ -97,8 +96,7 @@
         android:id="@+id/recyclerFileInCheck"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#FF0000"
-        android:backgroundTint="#C3C5C6" >
+        android:background="@drawable/back_r_round">
 
     </androidx.recyclerview.widget.RecyclerView>
 </LinearLayout></ScrollView>

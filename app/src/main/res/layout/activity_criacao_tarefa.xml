@@ -64,8 +64,7 @@
                 android:id="@+id/recyclerResponsavel"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="#FF0000"
-                android:backgroundTint="#C3C5C6"
+                android:background="@drawable/back_r_round"
                 android:minHeight="100dp" />
         </LinearLayout>
 
@@ -104,8 +103,7 @@
                 android:id="@+id/recyclerCheck"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="#FF0000"
-                android:backgroundTint="#C3C5C6"
+                android:background="@drawable/back_r_round"
                 android:minHeight="100dp" />
         </LinearLayout>
 
@@ -157,8 +155,7 @@
                 android:id="@+id/reyclerArquivos"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="#FF0000"
-                android:backgroundTint="#C3C5C6"
+                android:background="@drawable/back_r_round"
                 android:minHeight="100dp" />
         </LinearLayout>
 
@@ -198,8 +195,7 @@
                 android:id="@+id/recyclerObservadores"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="#FF0000"
-                android:backgroundTint="#C3C5C6"
+                android:background="@drawable/back_r_round"
                 android:minHeight="100dp" />
         </LinearLayout>
 
@@ -228,7 +224,7 @@
             android:id="@+id/tempoField"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="#FFFFFF"
+            android:background="@drawable/back_w_round"
             android:hint="Tempo"
             android:inputType="datetime|time"
             android:paddingStart="16dp"
