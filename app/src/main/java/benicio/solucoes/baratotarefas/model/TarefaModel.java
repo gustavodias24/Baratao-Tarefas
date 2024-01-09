@@ -4,27 +4,38 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TarefaModel {
+    String nomeTarefa;
     String id;
     List<UserModel> usuariosResponsaveis = new ArrayList<>();
+    List<UserModel> usuariosObservadores = new ArrayList<>();
+
     List<CheckModel> checks = new ArrayList<>();
     String descri;
     List<FileModel> arquivos = new ArrayList<>();
-    List<UserModel> usuariosObservadores = new ArrayList<>();
     String data;
     String hora;
 
     int status;
 
-    public TarefaModel(String id, List<UserModel> usuariosResponsaveis, List<CheckModel> checks, String descri, List<FileModel> arquivos, List<UserModel> usuariosObservadores, String data, String hora, int status) {
+    public TarefaModel(String nomeTarefa, String id, List<UserModel> usuariosResponsaveis, List<UserModel> usuariosObservadores, List<CheckModel> checks, String descri, List<FileModel> arquivos, String data, String hora, int status) {
+        this.nomeTarefa = nomeTarefa;
         this.id = id;
         this.usuariosResponsaveis = usuariosResponsaveis;
+        this.usuariosObservadores = usuariosObservadores;
         this.checks = checks;
         this.descri = descri;
         this.arquivos = arquivos;
-        this.usuariosObservadores = usuariosObservadores;
         this.data = data;
         this.hora = hora;
         this.status = status;
+    }
+
+    public String getNomeTarefa() {
+        return nomeTarefa;
+    }
+
+    public void setNomeTarefa(String nomeTarefa) {
+        this.nomeTarefa = nomeTarefa;
     }
 
     public int getStatus() {

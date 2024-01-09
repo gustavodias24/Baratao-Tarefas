@@ -148,32 +148,36 @@ public class CriacaoTarefaActivity extends AppCompatActivity {
         });
 
         mainBinding.concluir.setOnClickListener( view -> {
-            Log.d("mayara", "onCreate: " + listaDeUsuariosObservadoresSelecionados.size());
-            Log.d("mayara", "onCreate: " + listaDeUsuariosReponsaveisSelecionados.size());
-//            String hora = mainBinding.tempoField.getText().toString();
-//            String descri = mainBinding.descricaoField.getEditText().getText().toString();
-//            TarefaModel novaTarefa = new TarefaModel(
-//                    idTarefa,
-//                    listaDeUsuariosReponsaveisSelecionados,
-//                    listaCheck,
-//                    descri,
-//                    listaFilesTarefa,
-//                    listaDeUsuariosObservadoresSelecionados,
-//                    dataPrazo,
-//                    hora,
-//                    0
-//            );
-//
-//            dialogCarregando.show();
-//            refTarefas.child(idTarefa).setValue(novaTarefa).addOnCompleteListener( task -> {
-//                dialogCarregando.dismiss();
-//               if ( task.isSuccessful() ){
-//                   finish();
-//                   Toast.makeText(this, "Tarefa criada com sucesso!", Toast.LENGTH_LONG).show();
-//               }else{
-//                   Toast.makeText(this, "Erro de conexão", Toast.LENGTH_LONG).show();
-//               }
-//            });
+            String hora = mainBinding.tempoField.getText().toString();
+            String descri = mainBinding.descricaoField.getEditText().getText().toString();
+            String tituloTarefa = mainBinding.nomeField.getEditText().getText().toString();
+
+            if ( hora.isEmpty() ){ hora = "00:00";}
+            if ( tituloTarefa.isEmpty()){ tituloTarefa = "Sem Título";}
+
+            TarefaModel novaTarefa = new TarefaModel(
+                    tituloTarefa,
+                    idTarefa,
+                    listaDeUsuariosReponsaveisSelecionados,
+                    listaDeUsuariosObservadoresSelecionados,
+                    listaCheck,
+                    descri,
+                    listaFilesTarefa,
+                    dataPrazo,
+                    hora,
+                    0
+            );
+
+            dialogCarregando.show();
+            refTarefas.child(idTarefa).setValue(novaTarefa).addOnCompleteListener( task -> {
+                dialogCarregando.dismiss();
+               if ( task.isSuccessful() ){
+                   finish();
+                   Toast.makeText(this, "Tarefa criada com sucesso!", Toast.LENGTH_LONG).show();
+               }else{
+                   Toast.makeText(this, "Erro de conexão", Toast.LENGTH_LONG).show();
+               }
+            });
         });
 
         configurarRecyclerFiles();
