@@ -51,12 +51,14 @@ import benicio.solucoes.baratotarefas.databinding.LayoutExibirUsersBinding;
 import benicio.solucoes.baratotarefas.databinding.LoadingScreenBinding;
 import benicio.solucoes.baratotarefas.model.CheckModel;
 import benicio.solucoes.baratotarefas.model.FileModel;
+import benicio.solucoes.baratotarefas.model.TarefaModel;
 import benicio.solucoes.baratotarefas.model.UserModel;
 
 public class CriacaoTarefaActivity extends AppCompatActivity {
 
     private FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
     private DatabaseReference refUsers = FirebaseDatabase.getInstance().getReference().child("usuarios");
+    private DatabaseReference refTarefas = FirebaseDatabase.getInstance().getReference().child("tarefas");
     List<UserModel> listaDeUsuariosParaSelecionar = new ArrayList<>();
     List<UserModel> listaDeUsuariosParaSelecionarObservadores = new ArrayList<>();
     AdapterUsuarios adapterUsuariosSelecionaveis;
@@ -146,7 +148,32 @@ public class CriacaoTarefaActivity extends AppCompatActivity {
         });
 
         mainBinding.concluir.setOnClickListener( view -> {
-            Log.d("mayara", "onCreate: " + dataPrazo);
+            Log.d("mayara", "onCreate: " + listaDeUsuariosObservadoresSelecionados.size());
+            Log.d("mayara", "onCreate: " + listaDeUsuariosReponsaveisSelecionados.size());
+//            String hora = mainBinding.tempoField.getText().toString();
+//            String descri = mainBinding.descricaoField.getEditText().getText().toString();
+//            TarefaModel novaTarefa = new TarefaModel(
+//                    idTarefa,
+//                    listaDeUsuariosReponsaveisSelecionados,
+//                    listaCheck,
+//                    descri,
+//                    listaFilesTarefa,
+//                    listaDeUsuariosObservadoresSelecionados,
+//                    dataPrazo,
+//                    hora,
+//                    0
+//            );
+//
+//            dialogCarregando.show();
+//            refTarefas.child(idTarefa).setValue(novaTarefa).addOnCompleteListener( task -> {
+//                dialogCarregando.dismiss();
+//               if ( task.isSuccessful() ){
+//                   finish();
+//                   Toast.makeText(this, "Tarefa criada com sucesso!", Toast.LENGTH_LONG).show();
+//               }else{
+//                   Toast.makeText(this, "Erro de conexão", Toast.LENGTH_LONG).show();
+//               }
+//            });
         });
 
         configurarRecyclerFiles();
@@ -172,11 +199,11 @@ public class CriacaoTarefaActivity extends AppCompatActivity {
                 if (snapshot.exists()){
                     for ( DataSnapshot dado: snapshot.getChildren()){
                         UserModel usuarioBdAdicioanr = dado.getValue(UserModel.class);
-                        if( user.getEmail() != null && !user.getEmail().isEmpty()){
-                            if ( user.getEmail().equals(usuarioBdAdicioanr.getEmail())){
-                                usuarioBdAdicioanr.setNome("Você");
-                            }
-                        }
+//                        if( user.getEmail() != null && !user.getEmail().isEmpty()){
+//                            if ( user.getEmail().equals(usuarioBdAdicioanr.getEmail())){
+//                                usuarioBdAdicioanr.setNome("Você");
+//                            }
+//                        }
                         listaDeUsuariosParaSelecionar.add(usuarioBdAdicioanr);
                         listaDeUsuariosParaSelecionarObservadores.add(usuarioBdAdicioanr);
                     }
@@ -401,7 +428,7 @@ public class CriacaoTarefaActivity extends AppCompatActivity {
                 String checkId = UUID.randomUUID().toString();
 
                 listaDeSubChecks.add(new CheckModel(
-                        checkId, idTarefa, nomeSubCheck, false
+                        checkId, idTarefa, nomeSubCheck,"", false
                 ));
 
                 adapterSubCheck.notifyDataSetChanged();
@@ -446,9 +473,12 @@ public class CriacaoTarefaActivity extends AppCompatActivity {
             }else{
 
                 String checkId = UUID.randomUUID().toString();
+                String comentarioCheck = checkBinding.comentarioCheckField.getEditText().toString();
+
+                if ( comentarioCheck.isEmpty()) { comentarioCheck = "Sem comentários."; }
 
                 CheckModel novoCheck = new CheckModel(
-                        checkId, idTarefa, nomeCheck, false
+                        checkId, idTarefa, nomeCheck, comentarioCheck, false
                 );
 
                 novoCheck.getfilesDoCheck().addAll(listaDeArquivosDoCheck);
@@ -461,6 +491,7 @@ public class CriacaoTarefaActivity extends AppCompatActivity {
                 Toast.makeText(this, "Check Adicionado", Toast.LENGTH_SHORT).show();
 
                 checkBinding.nomeCheckField.getEditText().setText("");
+                checkBinding.comentarioCheckField.getEditText().setText("");
                 dialogCriarCheck.dismiss();
 
             }

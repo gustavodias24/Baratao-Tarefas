@@ -16,7 +16,7 @@
         tools:context=".TarefasActivity">
 
         <Button
-            android:id="@+id/button2"
+            android:id="@+id/filtro_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
@@ -40,7 +40,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/button2" />
+            app:layout_constraintTop_toBottomOf="@+id/filtro_btn" />
 
         <ImageView
             android:id="@+id/semtarefaimage"
@@ -50,7 +50,8 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.6"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/button2"
+            app:layout_constraintTop_toBottomOf="@+id/filtro_btn"
+            app:layout_constraintVertical_bias="0.39"
             tools:src="@raw/semtarefas" />
 
 

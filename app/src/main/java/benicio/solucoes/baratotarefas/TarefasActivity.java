@@ -5,6 +5,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -16,11 +18,13 @@ import com.squareup.picasso.Picasso;
 
 import benicio.solucoes.baratotarefas.databinding.ActivityLoginBinding;
 import benicio.solucoes.baratotarefas.databinding.ActivityTarefasBinding;
+import benicio.solucoes.baratotarefas.databinding.LayoutFiltroBinding;
 
 public class TarefasActivity extends AppCompatActivity {
 
     private ActivityTarefasBinding mainBinding;
     private FirebaseAuth auth = FirebaseAuth.getInstance();
+    private Dialog dialogFiltro;
 
     @SuppressLint("ResourceType")
     @Override
@@ -36,8 +40,19 @@ public class TarefasActivity extends AppCompatActivity {
         mainBinding.fab.setOnClickListener( view -> {
             startActivity(new Intent(this, CriacaoTarefaActivity.class));
         });
+
+        mainBinding.filtroBtn.setOnClickListener(view -> dialogFiltro.show());
+
+        configurarDialogFiltro();
     }
 
+    private void configurarDialogFiltro(){
+        AlertDialog.Builder b = new AlertDialog.Builder(this);
+        b.setTitle("Filtrar Tarefas");
+        LayoutFiltroBinding filtroBinding = LayoutFiltroBinding.inflate(getLayoutInflater());
+        b.setView(filtroBinding.getRoot());
+        dialogFiltro = b.create();
+    }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_principal, menu);
