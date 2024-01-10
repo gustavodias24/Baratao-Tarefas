@@ -102,6 +102,43 @@ public class TarefasActivity extends AppCompatActivity {
         AlertDialog.Builder b = new AlertDialog.Builder(this);
         b.setTitle("Filtrar Tarefas");
         LayoutFiltroBinding filtroBinding = LayoutFiltroBinding.inflate(getLayoutInflater());
+
+        filtroBinding.checkBoxPendentes.setOnClickListener(view -> {
+            if (filtroBinding.checkBoxPendentes.isChecked() ){
+                filtros.add(0);
+            }else{
+                Integer i = Integer.valueOf(0);
+                filtros.remove(i);
+            }
+            listarTarefas();
+        });
+
+
+
+        filtroBinding.checkBoxConcluidos.setOnClickListener(view -> {
+            if (filtroBinding.checkBoxConcluidos.isChecked() ){
+                filtros.add(2);
+            }else{
+                Integer i = Integer.valueOf(2);
+                filtros.remove(i);
+            }
+            listarTarefas();
+        });
+
+
+
+        filtroBinding.checkBoxVencidos.setOnClickListener(view -> {
+            if (filtroBinding.checkBoxVencidos.isChecked() ){
+                filtros.add(1);
+            }else{
+                Integer i = Integer.valueOf(1);
+                filtros.remove(i);
+            }
+
+            listarTarefas();
+        });
+
+
         b.setView(filtroBinding.getRoot());
         dialogFiltro = b.create();
     }
@@ -125,59 +162,63 @@ public class TarefasActivity extends AppCompatActivity {
 
     private void listarTarefas(){
         dialogCarregando.show();
-        if ( filtros.isEmpty() || filtros.size() == 3){
-            refTarefas.addListenerForSingleValueEvent(new ValueEventListener() {
-                @SuppressLint("NotifyDataSetChanged")
-                @Override
-                public void onDataChange(@NonNull DataSnapshot snapshot) {
-                    dialogCarregando.dismiss();
-                    if ( snapshot.exists() ){
-                        tarefas.clear();
-                        for (DataSnapshot dado : snapshot.getChildren()){
-                            TarefaModel tarefa = dado.getValue(TarefaModel.class);
+        refTarefas.addListenerForSingleValueEvent(new ValueEventListener() {
+            @SuppressLint("NotifyDataSetChanged")
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                dialogCarregando.dismiss();
+                if ( snapshot.exists() ){
+                    tarefas.clear();
+                    for (DataSnapshot dado : snapshot.getChildren()){
+                        TarefaModel tarefa = dado.getValue(TarefaModel.class);
 
-                            boolean addTarefa = false;
+                        boolean addTarefa = false;
 
-                            if ( tarefa.getUsuariosObservadores() != null){
-                                for( UserModel usuarioModel : tarefa.getUsuariosObservadores()){
+                        if ( tarefa.getUsuariosObservadores() != null){
+                            for( UserModel usuarioModel : tarefa.getUsuariosObservadores()){
+                                if( usuarioModel.getEmail().equals(emailLogado)){
+                                    addTarefa = true;
+                                    break;
+                                }
+                            }
+                        }
+                        if ( !addTarefa ){
+                            if( tarefa.getUsuariosResponsaveis() != null){
+                                for ( UserModel usuarioModel : tarefa.getUsuariosResponsaveis()){
                                     if( usuarioModel.getEmail().equals(emailLogado)){
                                         addTarefa = true;
                                         break;
                                     }
                                 }
                             }
-                            if ( !addTarefa ){
-                                if( tarefa.getUsuariosResponsaveis() != null){
-                                    for ( UserModel usuarioModel : tarefa.getUsuariosResponsaveis()){
-                                        if( usuarioModel.getEmail().equals(emailLogado)){
-                                            addTarefa = true;
-                                            break;
-                                        }
-                                    }
+                        }
+                        if ( addTarefa ){
+                            if ( filtros.isEmpty() || filtros.size() == 3 ){
+                                tarefas.add(tarefa);
+                            }else{
+                                if ( filtros.contains(tarefa.getStatus())){
+                                    tarefas.add(tarefa);
                                 }
                             }
-                            if ( addTarefa ){
-                                tarefas.add(tarefa);
-                            }
-                        }
-                        adapterTarefas.notifyDataSetChanged();
-                        if ( tarefas.isEmpty() ){
-                            mainBinding.recyclerTarefas.setVisibility(View.GONE);
-                            mainBinding.semtarefaimage.setVisibility(View.VISIBLE);
-                        }else{
-                            mainBinding.recyclerTarefas.setVisibility(View.VISIBLE);
-                            mainBinding.semtarefaimage.setVisibility(View.GONE);
                         }
                     }
-
+                    adapterTarefas.notifyDataSetChanged();
+                    if ( tarefas.isEmpty() ){
+                        mainBinding.recyclerTarefas.setVisibility(View.GONE);
+                        mainBinding.semtarefaimage.setVisibility(View.VISIBLE);
+                    }else{
+                        mainBinding.recyclerTarefas.setVisibility(View.VISIBLE);
+                        mainBinding.semtarefaimage.setVisibility(View.GONE);
+                    }
                 }
 
-                @Override
-                public void onCancelled(@NonNull DatabaseError error) {
-                    dialogCarregando.dismiss();
-                }
-            });
-        }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                dialogCarregando.dismiss();
+            }
+        });
     }
 
 }

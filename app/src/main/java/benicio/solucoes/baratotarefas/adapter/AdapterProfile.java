@@ -49,7 +49,6 @@ public class AdapterProfile extends RecyclerView.Adapter<AdapterProfile.MyViewHo
             @SuppressLint("ResourceType")
             @Override
             public void onError(Exception e) {
-                Log.d("mayara", "onError: " + e.getMessage());
                 holder.profileUser.setVisibility(View.VISIBLE);
                 holder.progressProfilePhoto.setVisibility(View.GONE);
                 Picasso.get().load(R.raw.notloading).into(holder.profileUser);

@@ -6,19 +6,19 @@
     android:orientation="vertical">
 
     <CheckBox
-        android:id="@+id/checkBox"
+        android:id="@+id/checkBoxPendentes"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Pendentes" />
 
     <CheckBox
-        android:id="@+id/checkBox2"
+        android:id="@+id/checkBoxConcluidos"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Concluídos" />
 
     <CheckBox
-        android:id="@+id/checkBox3"
+        android:id="@+id/checkBoxVencidos"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Vencidos" />
