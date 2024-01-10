@@ -63,7 +63,7 @@ public class AdapterTarefas extends RecyclerView.Adapter<AdapterTarefas.MyViewHo
 
         holder.recyclerResponsaveis.setLayoutManager(new LinearLayoutManager(c, RecyclerView.HORIZONTAL, false));
         holder.recyclerResponsaveis.setHasFixedSize(true);
-        holder.recyclerResponsaveis.addItemDecoration(new DividerItemDecoration(c, DividerItemDecoration.HORIZONTAL));
+//        holder.recyclerResponsaveis.addItemDecoration(new DividerItemDecoration(c, DividerItemDecoration.HORIZONTAL));
         AdapterProfile adapterProfile = new AdapterProfile(tarefaModel.getUsuariosResponsaveis());
         holder.recyclerResponsaveis.setAdapter(adapterProfile);
     }
@@ -89,7 +89,7 @@ public class AdapterTarefas extends RecyclerView.Adapter<AdapterTarefas.MyViewHo
         }
 
         textoHolder.setText(
-                String.format("Check(s) e subCheck(s) Concluídos:\n%d/%d",
+                String.format("%d/%d",
                         qtdCheckConcluidos,
                         qtdCheck)
                 );

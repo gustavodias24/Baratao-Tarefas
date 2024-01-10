@@ -2,6 +2,7 @@ package benicio.solucoes.baratotarefas.model;
 
 public class UserModel {
     String nome, email, login, senha, id, linkImageProfile;
+    String token = "";
 
     public UserModel(String nome, String email, String login, String senha, String id, String linkImageProfile) {
         this.nome = nome;
@@ -10,6 +11,18 @@ public class UserModel {
         this.senha = senha;
         this.id = id;
         this.linkImageProfile = linkImageProfile;
+    }
+
+    public String getLogin() {
+        return login;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
     }
 
     public UserModel() {

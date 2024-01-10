@@ -49,8 +49,7 @@
             android:id="@+id/recyclerUsuariosResponsaveis"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:padding="8dp" />
+            android:orientation="horizontal" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -130,12 +129,25 @@
         </LinearLayout>
 
         <TextView
+            android:id="@+id/textGerejfnasudifa"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="16dp"
+            android:text="Check(s) e subCheck(s) Concluídos"
+            android:textAlignment="center"
+            android:textColor="#050505"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <TextView
             android:id="@+id/concluidas_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_marginTop="8dp"
-            android:text="Check(s) e subCheck(s) Concluídos\n1/10"
+            android:background="@drawable/back_o_round"
+            android:padding="16dp"
+            android:text="1/1"
             android:textAlignment="center"
             android:textColor="#050505"
             android:textSize="16sp"

@@ -51,10 +51,13 @@ import benicio.solucoes.baratotarefas.databinding.LayoutExibirUsersBinding;
 import benicio.solucoes.baratotarefas.databinding.LoadingScreenBinding;
 import benicio.solucoes.baratotarefas.model.CheckModel;
 import benicio.solucoes.baratotarefas.model.FileModel;
+import benicio.solucoes.baratotarefas.model.NotificacaoModel;
 import benicio.solucoes.baratotarefas.model.TarefaModel;
 import benicio.solucoes.baratotarefas.model.UserModel;
 
 public class CriacaoTarefaActivity extends AppCompatActivity {
+
+    private DatabaseReference refNotificacoes = FirebaseDatabase.getInstance().getReference().child("notificacoes");
 
     private FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
     private DatabaseReference refUsers = FirebaseDatabase.getInstance().getReference().child("usuarios");
@@ -172,8 +175,25 @@ public class CriacaoTarefaActivity extends AppCompatActivity {
             refTarefas.child(idTarefa).setValue(novaTarefa).addOnCompleteListener( task -> {
                 dialogCarregando.dismiss();
                if ( task.isSuccessful() ){
-                   finish();
-                   Toast.makeText(this, "Tarefa criada com sucesso!", Toast.LENGTH_LONG).show();
+                   NotificacaoModel notificacaoResponsaveis = new NotificacaoModel("Nova Tarefa", "Você foi envolvido como responsável em uma nova tarefa!");
+                   NotificacaoModel notificacaoObservadores = new NotificacaoModel("Nova Tarefa", "Você foi envolvido como observador em uma nova tarefa!");
+
+                   for ( UserModel userObs : listaDeUsuariosReponsaveisSelecionados){
+                       notificacaoResponsaveis.getListaToken().add(userObs.getToken());
+                   }
+
+                   for ( UserModel userObs : listaDeUsuariosObservadoresSelecionados){
+                       notificacaoObservadores.getListaToken().add(userObs.getToken());
+                   }
+
+                   refNotificacoes.child(UUID.randomUUID().toString()).setValue(notificacaoResponsaveis).addOnCompleteListener( taskNotResponsaveis -> {
+                       refNotificacoes.child(UUID.randomUUID().toString()).setValue(notificacaoObservadores).addOnCompleteListener( taskNotifObservaores -> {
+                           finish();
+                           Toast.makeText(this, "Tarefa criada com sucesso!", Toast.LENGTH_LONG).show();
+                       });
+                   });
+
+
                }else{
                    Toast.makeText(this, "Erro de conexão", Toast.LENGTH_LONG).show();
                }
