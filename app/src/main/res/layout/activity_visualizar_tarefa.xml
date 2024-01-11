@@ -286,15 +286,28 @@
                 app:iconTint="#FFFFFF" />
 
             <Button
+                android:id="@+id/btn_finalizar_tarefa"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:backgroundTint="#FF0000"
+                android:text="terminar prazo"
+                android:textColor="#FFFFFF"
+                android:textStyle="bold"
+                app:iconTint="#FFFFFF" />
+
+            <Button
                 android:id="@+id/btn_excluir"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="4dp"
                 android:backgroundTint="#FF0000"
                 android:text="excluir tarefa"
                 android:textColor="#FFFFFF"
                 android:textStyle="bold"
                 app:iconTint="#FFFFFF" />
+
+
         </LinearLayout>
 
     </LinearLayout></ScrollView>
