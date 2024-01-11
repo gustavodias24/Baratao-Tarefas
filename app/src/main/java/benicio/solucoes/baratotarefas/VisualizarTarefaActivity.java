@@ -29,12 +29,14 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.UUID;
 
 import benicio.solucoes.baratotarefas.adapter.AdapterArquivos;
@@ -96,6 +98,8 @@ public class VisualizarTarefaActivity extends AppCompatActivity {
     private Dialog dialogCarregando;
 
     private TarefaModel tarefaSelecionada;
+
+    private String dataPrazo;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -128,6 +132,43 @@ public class VisualizarTarefaActivity extends AppCompatActivity {
                finish();
                Toast.makeText(VisualizarTarefaActivity.this, "Problema de conexão", Toast.LENGTH_SHORT).show();
            }
+        });
+
+        Date date = new Date();
+        @SuppressLint("SimpleDateFormat") DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+        dataPrazo = dateFormat.format(date.getTime());
+
+        mainBinding.calendarView.setOnDateChangeListener((calendarView, i, i1, i2) -> {
+            String formattedMonth = String.format(Locale.getDefault(), "%02d", i1 + 1);
+            String formattedDay = String.format(Locale.getDefault(), "%02d", i2);
+            dataPrazo = formattedDay + "/" + formattedMonth  + "/"  + i;
+        });
+
+        mainBinding.btnConcluir.setOnClickListener( view -> {
+            dialogCarregando.show();
+
+            String hora = mainBinding.tempoField.getText().toString();
+            String descri = mainBinding.descricaoField.getEditText().getText().toString();
+            String tituloTarefa = mainBinding.nomeField.getEditText().getText().toString();
+
+            if ( hora.isEmpty() ){ hora = "00:00";}
+            if ( tituloTarefa.isEmpty()){ tituloTarefa = "Sem Título";}
+            if ( descri.isEmpty()){ descri = "Sem Descrição";}
+
+
+            tarefaSelecionada.setHora(hora);
+            tarefaSelecionada.setNomeTarefa(tituloTarefa);
+            tarefaSelecionada.setDescri(descri);
+            tarefaSelecionada.setData(dataPrazo);
+
+            refTarefas.child(idTarefa).setValue(tarefaSelecionada).addOnCompleteListener( task -> {
+               dialogCarregando.dismiss();
+
+               if ( task.isSuccessful() ){
+                   Toast.makeText(this, "Tarefa Editada com Sucesso!", Toast.LENGTH_SHORT).show();
+                   enviarPushParaTodos("Tarefa Editada", "A tarefa " + tarefaSelecionada.getNomeTarefa() + " acabou de ser editada!");
+               }
+            });
         });
 
         mainBinding.procurarResponsavel.setOnClickListener( view -> {
@@ -163,13 +204,29 @@ public class VisualizarTarefaActivity extends AppCompatActivity {
         });
         
         mainBinding.btnExcluir.setOnClickListener( view -> {
-            dialogCarregando.show();
             refTarefas.child(idTarefa).setValue(null).addOnCompleteListener( task -> {
                 finish();
                 Toast.makeText(this, "Tarefa excluída.", Toast.LENGTH_SHORT).show();
             });
         });
+
+        mainBinding.btnAviso.setOnClickListener( view -> {
+            enviarPushParaTodos("Aviso!", "Resta apenas 1 dia para terminar o prazo da tarefa " + tarefaSelecionada.getNomeTarefa());
+        });
+
+        mainBinding.btnFinalizarTarefa.setOnClickListener(view -> {
+            tarefaSelecionada.setStatus(1);
+            dialogCarregando.show();
+
+            refTarefas.child(idTarefa).setValue(tarefaSelecionada).addOnCompleteListener( task -> {
+               dialogCarregando.dismiss();
+                enviarPushParaTodos("Aviso!", "Acabou o prazo da tarefa " + tarefaSelecionada.getNomeTarefa());
+                Toast.makeText(this, "Tarefa Expirada", Toast.LENGTH_SHORT).show();
+            });
+
+        });
     }
+
 
     private void openFilePicker(int code) {
         Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
@@ -242,6 +299,23 @@ public class VisualizarTarefaActivity extends AppCompatActivity {
         }
     }
 
+    private void enviarPushParaTodos(String titulo, String corpo){
+        NotificacaoModel notificacaoResponsaveis = new NotificacaoModel(
+                titulo, corpo);
+
+        for ( UserModel userObs : tarefaSelecionada.getUsuariosResponsaveis()){
+            notificacaoResponsaveis.getListaToken().add(userObs.getToken());
+        }
+
+        for ( UserModel userObs : tarefaSelecionada.getUsuariosObservadores()){
+            notificacaoResponsaveis.getListaToken().add(userObs.getToken());
+        }
+
+        refNotificacoes.child(UUID.randomUUID().toString()).setValue(notificacaoResponsaveis).addOnCompleteListener(taskNotifObservaores -> {
+            refNotificacoes.setValue(null);
+        });
+
+    }
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if ( item.getItemId() == android.R.id.home){finish();}
@@ -254,9 +328,6 @@ public class VisualizarTarefaActivity extends AppCompatActivity {
         LoadingScreenBinding dialogBinding = LoadingScreenBinding.inflate(getLayoutInflater());
         dialogCarregando = b.setView(dialogBinding.getRoot()).create();
     }
-
-
-
 
     private void configurarNaoAdm(){
 
@@ -427,8 +498,6 @@ public class VisualizarTarefaActivity extends AppCompatActivity {
         b.setView(subCheckBinding.getRoot());
         dialogSubCheck = b.create();
     }
-
-
 
     private void atualizarListaDeSelecaoDeUsuarios(Dialog dialogParaAbrir){
         dialogCarregando.show();

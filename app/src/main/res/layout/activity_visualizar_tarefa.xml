@@ -281,6 +281,7 @@
                 android:layout_marginTop="16dp"
                 android:backgroundTint="#2196F3"
                 android:text="Concluir edição"
+                android:textAllCaps="true"
                 android:textColor="#FFFFFF"
                 android:textStyle="bold"
                 app:iconTint="#FFFFFF" />
@@ -292,6 +293,19 @@
                 android:layout_marginTop="4dp"
                 android:backgroundTint="#FF0000"
                 android:text="terminar prazo"
+                android:textAllCaps="true"
+                android:textColor="#FFFFFF"
+                android:textStyle="bold"
+                app:iconTint="#FFFFFF" />
+
+            <Button
+                android:id="@+id/btn_aviso"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:backgroundTint="#FF0000"
+                android:text="avisar 1 dia faltante"
+                android:textAllCaps="true"
                 android:textColor="#FFFFFF"
                 android:textStyle="bold"
                 app:iconTint="#FFFFFF" />
@@ -303,6 +317,7 @@
                 android:layout_marginTop="4dp"
                 android:backgroundTint="#FF0000"
                 android:text="excluir tarefa"
+                android:textAllCaps="true"
                 android:textColor="#FFFFFF"
                 android:textStyle="bold"
                 app:iconTint="#FFFFFF" />
