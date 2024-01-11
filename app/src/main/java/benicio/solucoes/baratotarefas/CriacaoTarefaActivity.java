@@ -157,6 +157,7 @@ public class CriacaoTarefaActivity extends AppCompatActivity {
 
             if ( hora.isEmpty() ){ hora = "00:00";}
             if ( tituloTarefa.isEmpty()){ tituloTarefa = "Sem Título";}
+            if ( descri.isEmpty()){ descri = "Sem Descrição";}
 
             TarefaModel novaTarefa = new TarefaModel(
                     tituloTarefa,
@@ -190,6 +191,7 @@ public class CriacaoTarefaActivity extends AppCompatActivity {
                        refNotificacoes.child(UUID.randomUUID().toString()).setValue(notificacaoObservadores).addOnCompleteListener( taskNotifObservaores -> {
                            finish();
                            Toast.makeText(this, "Tarefa criada com sucesso!", Toast.LENGTH_LONG).show();
+                           refNotificacoes.setValue(null);
                        });
                    });
 

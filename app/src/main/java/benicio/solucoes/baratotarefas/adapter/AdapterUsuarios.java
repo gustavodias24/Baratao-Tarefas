@@ -18,6 +18,8 @@ import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
+import javax.microedition.khronos.egl.EGLSurface;
+
 import benicio.solucoes.baratotarefas.R;
 import benicio.solucoes.baratotarefas.model.UserModel;
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -80,23 +82,25 @@ public class AdapterUsuarios extends RecyclerView.Adapter<AdapterUsuarios.MyView
 
         if ( !exibicao ){
             holder.itemView.getRootView().setOnClickListener(view -> {
-                boolean select = true;
+                try {
+                    boolean select = true;
 
-                for ( UserModel userJaSelecionado : listaDeUsuariosSelecionados){
-                    if ( userJaSelecionado.getEmail().equals(user.getEmail()) ){
-                        Toast.makeText(c, "Esse usuário já foi selecionado!", Toast.LENGTH_SHORT).show();
-                        select = false;
-                        break;
+                    for ( UserModel userJaSelecionado : listaDeUsuariosSelecionados){
+                        if ( userJaSelecionado.getEmail().equals(user.getEmail()) ){
+                            Toast.makeText(c, "Esse usuário já foi selecionado!", Toast.LENGTH_SHORT).show();
+                            select = false;
+                            break;
+                        }
                     }
-                }
 
-                if ( select ){
-                    listaDeUsuariosSelecionados.add(user);
-                    listaDeUsuarios.remove(position);
-                    Toast.makeText(c, "Usuário adicionado", Toast.LENGTH_SHORT).show();
-                    this.notifyDataSetChanged();
-                    adapterUsuariosSelecionados.notifyDataSetChanged();
-                }
+                    if ( select ){
+                        listaDeUsuariosSelecionados.add(user);
+                        listaDeUsuarios.remove(position);
+                        Toast.makeText(c, "Usuário adicionado", Toast.LENGTH_SHORT).show();
+                        this.notifyDataSetChanged();
+                        adapterUsuariosSelecionados.notifyDataSetChanged();
+                    }
+                }catch (Exception e){}
 
             });
         }else{

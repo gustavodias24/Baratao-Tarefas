@@ -2,6 +2,7 @@ package benicio.solucoes.baratotarefas.adapter;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,6 +19,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.List;
 
 import benicio.solucoes.baratotarefas.R;
+import benicio.solucoes.baratotarefas.VisualizarTarefaActivity;
 import benicio.solucoes.baratotarefas.model.CheckModel;
 import benicio.solucoes.baratotarefas.model.TarefaModel;
 
@@ -66,6 +68,13 @@ public class AdapterTarefas extends RecyclerView.Adapter<AdapterTarefas.MyViewHo
 //        holder.recyclerResponsaveis.addItemDecoration(new DividerItemDecoration(c, DividerItemDecoration.HORIZONTAL));
         AdapterProfile adapterProfile = new AdapterProfile(tarefaModel.getUsuariosResponsaveis());
         holder.recyclerResponsaveis.setAdapter(adapterProfile);
+
+        holder.imageMore.setOnClickListener( view -> {
+            Intent i = new Intent(c, VisualizarTarefaActivity.class);
+            i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            i.putExtra("idTarefa", tarefaModel.getId());
+            c.startActivity(i);
+        });
     }
 
     @SuppressLint("DefaultLocale")

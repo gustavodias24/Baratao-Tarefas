@@ -1,0 +1,300 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:fillViewport="true"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent"
+    >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/amarelo"
+        android:orientation="vertical"
+        android:padding="8dp"
+        tools:context=".VisualizarTarefaActivity">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/textView8"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="Responsáveis"
+                android:textColor="#000000"
+                android:textSize="24sp"
+                android:textStyle="bold" />
+
+            <Button
+                android:id="@+id/procurarResponsavel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:backgroundTint="@color/verde"
+                android:isScrollContainer="false"
+                android:paddingTop="16dp"
+                android:paddingBottom="16dp"
+                android:pointerIcon="cell"
+                android:text="Pessoal Responsável"
+                android:textColor="#FFFFFF"
+                app:icon="@drawable/baseline_border_color_24"
+                app:iconGravity="textEnd"
+                app:iconTint="#FFFFFF"
+                app:iconTintMode="src_in" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerResponsavel"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/back_r_round"
+                android:minHeight="100dp" />
+        </LinearLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/nomeField"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:clickable="true"
+            android:hint="Nome da Tarefa"
+            android:textColorHint="#000000"
+            app:boxBackgroundColor="#FFFFFF"
+            app:boxCornerRadiusBottomEnd="16dp"
+            app:boxCornerRadiusBottomStart="16dp"
+            app:boxCornerRadiusTopEnd="16dp"
+            app:boxCornerRadiusTopStart="16dp"
+            app:boxStrokeColor="#000000"
+            app:hintTextColor="#000000">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:editable="true"
+                android:enabled="true" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/descricaoField"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:hint="Descrição"
+            android:textColorHint="#000000"
+            app:boxBackgroundColor="#FFFFFF"
+            app:boxCornerRadiusBottomEnd="16dp"
+            app:boxCornerRadiusBottomStart="16dp"
+            app:boxCornerRadiusTopEnd="16dp"
+            app:boxCornerRadiusTopStart="16dp"
+            app:boxStrokeColor="#000000"
+            app:hintTextColor="#000000">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="CheckList de verificação"
+            android:textColor="#000000"
+            android:textSize="24sp"
+            android:textStyle="bold" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <Button
+                android:id="@+id/adicionarCheck"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:backgroundTint="@color/verde"
+                android:isScrollContainer="false"
+                android:paddingTop="16dp"
+                android:paddingBottom="16dp"
+                android:pointerIcon="cell"
+                android:text="Adicionar Check"
+                android:textColor="#FFFFFF"
+                app:icon="@drawable/baseline_check_24"
+                app:iconGravity="textEnd"
+                app:iconTint="#FFFFFF" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerCheck"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/back_r_round"
+                android:minHeight="100dp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/textView4"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="Arquivos"
+                android:textColor="#000000"
+                android:textSize="24sp"
+                android:textStyle="bold" />
+
+            <Button
+                android:id="@+id/enviarArquivo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:backgroundTint="@color/verde"
+                android:isScrollContainer="false"
+                android:paddingTop="16dp"
+                android:paddingBottom="16dp"
+                android:pointerIcon="cell"
+                android:text="Arquivos"
+                android:textColor="#FFFFFF"
+                app:icon="@drawable/baseline_insert_drive_file_24"
+                app:iconGravity="textEnd"
+                app:iconTint="#FFFFFF"
+                app:iconTintMode="src_in" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/reyclerArquivos"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/back_r_round"
+                android:minHeight="100dp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/textView3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="Observadores"
+                android:textColor="#000000"
+                android:textSize="24sp"
+                android:textStyle="bold" />
+
+            <Button
+                android:id="@+id/procurarObservador"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:backgroundTint="@color/verde"
+                android:isScrollContainer="false"
+                android:paddingTop="16dp"
+                android:paddingBottom="16dp"
+                android:pointerIcon="cell"
+                android:text="Procurar"
+                android:textColor="#FFFFFF"
+                app:icon="@drawable/baseline_visibility_24"
+                app:iconGravity="textEnd"
+                app:iconTint="#FFFFFF"
+                app:iconTintMode="src_in" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerObservadores"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/back_r_round"
+                android:minHeight="100dp" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/textView5"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="Prazo de Entrega"
+            android:textColor="#000000"
+            android:textSize="24sp"
+            android:textStyle="bold" />
+
+        <CalendarView
+            android:id="@+id/calendarView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/textView6"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Hora de 00:00 até 23:59" />
+
+        <com.vicmikhailau.maskededittext.MaskedEditText
+            android:id="@+id/tempoField"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/back_w_round"
+            android:hint="Tempo"
+            android:inputType="datetime|time"
+            android:paddingStart="16dp"
+            android:paddingTop="24dp"
+            android:paddingEnd="16dp"
+            android:paddingBottom="24dp"
+            android:textColor="#000000"
+            app:mask="##:##" />
+
+        <Button
+            android:id="@+id/btn_prorrogacao"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:backgroundTint="@color/verde"
+            android:text="Soliciar prorrogação"
+            android:textColor="#FFFFFF"
+            android:textStyle="bold"
+            app:iconTint="#FFFFFF" />
+
+        <LinearLayout
+            android:id="@+id/btns_admins"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <Button
+                android:id="@+id/btn_concluir"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:backgroundTint="#2196F3"
+                android:text="Concluir edição"
+                android:textColor="#FFFFFF"
+                android:textStyle="bold"
+                app:iconTint="#FFFFFF" />
+
+            <Button
+                android:id="@+id/btn_excluir"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:backgroundTint="#FF0000"
+                android:text="excluir tarefa"
+                android:textColor="#FFFFFF"
+                android:textStyle="bold"
+                app:iconTint="#FFFFFF" />
+        </LinearLayout>
+
+    </LinearLayout></ScrollView>

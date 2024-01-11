@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -38,12 +39,21 @@ public class AdapterArquivos extends RecyclerView.Adapter<AdapterArquivos.MyView
 
     StorageReference filesTarefa;
 
+    boolean isAdmin = true;
 
     public AdapterArquivos(List<FileModel> listaDeArquivos, Activity c, String idTarefa, Dialog dialogCarregar) {
         this.listaDeArquivos = listaDeArquivos;
         this.c = c;
         this.filesTarefa = FirebaseStorage.getInstance().getReference().getRoot().child("filesTarefa").child(idTarefa);
         this.dialogCarregar = dialogCarregar;
+    }
+
+    public AdapterArquivos(List<FileModel> listaDeArquivos, Activity c, String idTarefa, Dialog dialogCarregar, boolean isAdmin) {
+        this.listaDeArquivos = listaDeArquivos;
+        this.c = c;
+        this.filesTarefa = FirebaseStorage.getInstance().getReference().getRoot().child("filesTarefa").child(idTarefa);
+        this.dialogCarregar = dialogCarregar;
+        this.isAdmin = isAdmin;
     }
 
     @NonNull
@@ -56,6 +66,16 @@ public class AdapterArquivos extends RecyclerView.Adapter<AdapterArquivos.MyView
     @Override
     public void onBindViewHolder(@NonNull MyViewHolver holder, int position) {
         FileModel file = listaDeArquivos.get(position);
+
+        holder.downloadFile.setOnClickListener(view -> {
+            Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse(file.getfileLink()));
+            i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            c.startActivity(i);
+        });
+
+        if ( !isAdmin ){
+            holder.removeFile.setVisibility(View.INVISIBLE);
+        }
 
         holder.nomeFileText.setText(file.getNomeExibicao());
 
