@@ -38,6 +38,7 @@ import java.util.List;
 import java.util.UUID;
 
 import benicio.solucoes.baratotarefas.adapter.AdapterArquivos;
+import benicio.solucoes.baratotarefas.adapter.AdapterChecks;
 import benicio.solucoes.baratotarefas.adapter.AdapterUsuarios;
 import benicio.solucoes.baratotarefas.databinding.ActivityCriacaoTarefaBinding;
 import benicio.solucoes.baratotarefas.databinding.ActivityVisualizarTarefaBinding;
@@ -50,6 +51,10 @@ import benicio.solucoes.baratotarefas.model.UserModel;
 import benicio.solucoes.baratotarefas.service.FileNameUtils;
 
 public class VisualizarTarefaActivity extends AppCompatActivity {
+
+    private RecyclerView recyclerChecks;
+    private AdapterChecks adapterChecks;
+
     private StorageReference filesTarefa;
     private static final int REQUEST_PICK_FILE = 1;
     private static final int REQUEST_PICK_FILE_IN_CHECK = 2;
@@ -271,6 +276,16 @@ public class VisualizarTarefaActivity extends AppCompatActivity {
         configurarRecyclerResponsaveisSelecionados(isAdmin);
         configurarRecyclerObservadoresSelecionados(isAdmin);
         configurarRecyclerFiles(isAdmin);
+        configurarRecyclerChecks(isAdmin);
+    }
+
+    private void configurarRecyclerChecks(Boolean isAdmin) {
+        recyclerChecks = mainBinding.recyclerCheck;
+        recyclerChecks.setLayoutManager(new LinearLayoutManager(this));
+        recyclerChecks.setHasFixedSize(true);
+        recyclerChecks.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
+        adapterChecks = new AdapterChecks(this, tarefaSelecionada.getChecks(), dialogCarregando, false, isAdmin);
+        recyclerChecks.setAdapter(adapterChecks);
     }
 
     private void configurarRecyclerResponsaveisSelecionados(Boolean isAdmin) {

@@ -54,6 +54,7 @@ import benicio.solucoes.baratotarefas.model.FileModel;
 import benicio.solucoes.baratotarefas.model.NotificacaoModel;
 import benicio.solucoes.baratotarefas.model.TarefaModel;
 import benicio.solucoes.baratotarefas.model.UserModel;
+import benicio.solucoes.baratotarefas.service.FileNameUtils;
 
 public class CriacaoTarefaActivity extends AppCompatActivity {
 
@@ -333,9 +334,9 @@ public class CriacaoTarefaActivity extends AppCompatActivity {
         if (requestCode == REQUEST_PICK_FILE && resultCode == RESULT_OK) {
             dialogCarregando.show();
             Uri fileUri = data.getData();
-            String nomeReal = getFileName(fileUri);
-            String nomeExibicao = truncateFileName(nomeReal, 20);
-            String nomeDoBanco = fileNameForDb(nomeReal);
+            String nomeReal = FileNameUtils.getFileName(fileUri, this);
+            String nomeExibicao = FileNameUtils.truncateFileName(nomeReal, 20);
+            String nomeDoBanco = FileNameUtils.fileNameForDb(nomeReal);
 
             UploadTask uploadTask = filesTarefa.child(nomeDoBanco).putFile(fileUri);
 
@@ -357,9 +358,9 @@ public class CriacaoTarefaActivity extends AppCompatActivity {
 
             dialogCarregando.show();
             Uri fileUri = data.getData();
-            String nomeReal = getFileName(fileUri);
-            String nomeExibicao = truncateFileName(nomeReal, 20);
-            String nomeDoBanco = fileNameForDb(nomeReal);
+            String nomeReal = FileNameUtils.getFileName(fileUri, this);
+            String nomeExibicao = FileNameUtils.truncateFileName(nomeReal, 20);
+            String nomeDoBanco = FileNameUtils.fileNameForDb(nomeReal);
 
             UploadTask uploadTask = filesTarefa.child(nomeDoBanco).putFile(fileUri);
 
@@ -387,40 +388,6 @@ public class CriacaoTarefaActivity extends AppCompatActivity {
                 }
             });
 
-        }
-    }
-
-    private String getFileName(Uri uri) {
-        String result = null;
-        if (uri.getScheme().equals("content")) {
-            try (Cursor cursor = getContentResolver().query(uri, null, null, null, null)) {
-                if (cursor != null && cursor.moveToFirst()) {
-                    int displayNameIndex = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
-                    result = cursor.getString(displayNameIndex);
-                }
-            }
-        }
-        if (result == null) {
-            result = uri.getPath();
-            int cut = result.lastIndexOf('/');
-            if (cut != -1) {
-                result = result.substring(cut + 1);
-            }
-        }
-        return result;
-    }
-    private String fileNameForDb(String fileName){
-        String extension = fileName.substring(fileName.lastIndexOf('.'));
-        String nome = UUID.randomUUID().toString();
-        return nome + extension;
-    }
-    private String truncateFileName(String fileName, int maxLength) {
-        if (fileName.length() > maxLength) {
-            String extension = fileName.substring(fileName.lastIndexOf('.'));
-            String truncatedName = fileName.substring(0, maxLength - 3) + "..." + extension;
-            return truncatedName;
-        } else {
-            return fileName;
         }
     }
 

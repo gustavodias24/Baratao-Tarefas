@@ -74,7 +74,7 @@ public class AdapterArquivos extends RecyclerView.Adapter<AdapterArquivos.MyView
         });
 
         if ( !isAdmin ){
-            holder.removeFile.setVisibility(View.INVISIBLE);
+            holder.removeFile.setVisibility(View.GONE);
         }
 
         holder.nomeFileText.setText(file.getNomeExibicao());

@@ -39,7 +39,8 @@
                 android:layout_weight="0"
                 android:backgroundTint="#00FF0000"
                 android:scaleType="centerInside"
-                android:src="@raw/editicon" />
+                android:src="@raw/editicon"
+                android:visibility="gone" />
 
             <RadioButton
                 android:id="@+id/radioCheck"

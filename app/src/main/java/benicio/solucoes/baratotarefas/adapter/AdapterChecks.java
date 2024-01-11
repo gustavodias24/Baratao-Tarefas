@@ -30,11 +30,21 @@ public class AdapterChecks extends RecyclerView.Adapter<AdapterChecks.MyViewHold
 
     boolean isSubCheck;
 
+    boolean isAdmin = true;
+
     public AdapterChecks(Activity c, List<CheckModel> listaChecks, Dialog dialogCarregando, boolean isSubCheck) {
         this.c = c;
         this.listaChecks = listaChecks;
         this.dialogCarregando = dialogCarregando;
         this.isSubCheck = isSubCheck;
+    }
+
+    public AdapterChecks(Activity c, List<CheckModel> listaChecks, Dialog dialogCarregando, boolean isSubCheck, boolean isAdmin) {
+        this.c = c;
+        this.listaChecks = listaChecks;
+        this.dialogCarregando = dialogCarregando;
+        this.isSubCheck = isSubCheck;
+        this.isAdmin = isAdmin;
     }
 
     @NonNull
@@ -48,6 +58,9 @@ public class AdapterChecks extends RecyclerView.Adapter<AdapterChecks.MyViewHold
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
         CheckModel check = listaChecks.get(position);
 
+        if ( !isAdmin) {
+            holder.removeCheck.setVisibility(View.GONE);
+        }
 
         if ( isSubCheck ){
             holder.editCheck.setVisibility(View.GONE);
@@ -82,7 +95,7 @@ public class AdapterChecks extends RecyclerView.Adapter<AdapterChecks.MyViewHold
             holder.recyclerSubChecks.addItemDecoration(new DividerItemDecoration(c, DividerItemDecoration.VERTICAL));
             holder.recyclerSubChecks.setHasFixedSize(true);
             holder.recyclerSubChecks.setLayoutManager(new LinearLayoutManager(c));
-            AdapterChecks adapterSubChecks = new AdapterChecks(c, check.getSubChecks(), dialogCarregando, true);
+            AdapterChecks adapterSubChecks = new AdapterChecks(c, check.getSubChecks(), dialogCarregando, true, isAdmin);
             holder.recyclerSubChecks.setAdapter(adapterSubChecks);
         }
 
@@ -90,7 +103,7 @@ public class AdapterChecks extends RecyclerView.Adapter<AdapterChecks.MyViewHold
             holder.recyclerFiles.addItemDecoration(new DividerItemDecoration(c, DividerItemDecoration.VERTICAL));
             holder.recyclerFiles.setHasFixedSize(true);
             holder.recyclerFiles.setLayoutManager(new LinearLayoutManager(c));
-            AdapterArquivos adapterArquivos = new AdapterArquivos(check.getfilesDoCheck(), c, check.getIdTarefa(), dialogCarregando);
+            AdapterArquivos adapterArquivos = new AdapterArquivos(check.getfilesDoCheck(), c, check.getIdTarefa(), dialogCarregando, isAdmin);
             holder.recyclerFiles.setAdapter(adapterArquivos);
         }
 
