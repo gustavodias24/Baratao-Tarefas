@@ -16,14 +16,19 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
 import java.util.List;
 
 import benicio.solucoes.baratotarefas.R;
 import benicio.solucoes.baratotarefas.model.CheckModel;
 import benicio.solucoes.baratotarefas.model.FileModel;
+import benicio.solucoes.baratotarefas.model.TarefaModel;
 
 public class AdapterChecks extends RecyclerView.Adapter<AdapterChecks.MyViewHolder> {
 
+    private DatabaseReference refTarefas = FirebaseDatabase.getInstance().getReference().child("tarefas");
     Activity c;
     List<CheckModel> listaChecks;
     Dialog dialogCarregando;
@@ -58,6 +63,10 @@ public class AdapterChecks extends RecyclerView.Adapter<AdapterChecks.MyViewHold
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
         CheckModel check = listaChecks.get(position);
 
+        if ( check.getChecked() ){
+            holder.btnCheck.setChecked(true);
+        }
+
         if ( !isAdmin) {
             holder.removeCheck.setVisibility(View.GONE);
         }
@@ -77,6 +86,8 @@ public class AdapterChecks extends RecyclerView.Adapter<AdapterChecks.MyViewHold
 
         holder.btnCheck.setOnClickListener(view -> {
 
+
+
             if ( !check.getChecked() ){
                 holder.btnCheck.setChecked(true);
                 check.setChecked(true);
@@ -84,6 +95,9 @@ public class AdapterChecks extends RecyclerView.Adapter<AdapterChecks.MyViewHold
                 holder.btnCheck.setChecked(false);
                 check.setChecked(false);
             }
+
+            atualizarCheckNoBanco(check, holder);
+
 
         });
 
@@ -109,17 +123,71 @@ public class AdapterChecks extends RecyclerView.Adapter<AdapterChecks.MyViewHold
 
     }
 
-    private Boolean veriificarTodosOsCheck(CheckModel check){
-        Boolean todosChecados = true;
+    @SuppressLint("NotifyDataSetChanged")
+    private void atualizarCheckNoBanco(CheckModel check, MyViewHolder holder){
+        dialogCarregando.show();
 
-        if ( check.getSubChecks() != null && !check.getSubChecks().isEmpty()){
-            for ( CheckModel subChek : check.getSubChecks()){
-                if (!subChek.getChecked()){
-                    todosChecados = false;
+        refTarefas.child(check.getIdTarefa()).get().addOnCompleteListener(task -> {
+            TarefaModel tarefaModel = task.getResult().getValue(TarefaModel.class);
+
+            if ( !check.getSubChecks().isEmpty() ){
+                for ( CheckModel checkModel : tarefaModel.getChecks() ){
+                    if ( checkModel.getId().equals(check.getId())){
+                        for ( CheckModel subCheck : checkModel.getSubChecks()){
+                            subCheck.setChecked(holder.btnCheck.isChecked());
+                        }
+                        for ( CheckModel checkReal : check.getSubChecks() ){
+                            checkReal.setChecked(holder.btnCheck.isChecked());
+                        }
+                        this.notifyDataSetChanged();
+                        break;
+                    }
+                }
+            }
+
+            boolean jaAtualizou = false;
+            for(CheckModel checkDaTarefa : tarefaModel.getChecks()){
+                if ( jaAtualizou ){break;}
+
+                if ( checkDaTarefa.getId().equals(check.getId()) ){
+                    checkDaTarefa.setChecked(holder.btnCheck.isChecked());
+                    jaAtualizou = true;
+                }
+
+                for ( CheckModel subCheckDoCheck : checkDaTarefa.getSubChecks()){
+                    if ( subCheckDoCheck.getId().equals(check.getId())){
+                        subCheckDoCheck.setChecked(holder.btnCheck.isChecked());
+                        jaAtualizou = true;
+                    }
+                }
+
+            }
+
+            tarefaModel.setStatus(veriificarTodosOsChecados(tarefaModel));
+
+            refTarefas.child(check.getIdTarefa()).setValue(tarefaModel).addOnCompleteListener( attTarefaTask -> {
+                dialogCarregando.dismiss();
+            });
+
+        });
+    }
+    private int veriificarTodosOsChecados(TarefaModel tarefaModel){
+        int todosChecados = 2;
+
+        for ( CheckModel check : tarefaModel.getChecks()){
+            if ( !check.getChecked() ){
+                todosChecados = 0;
+                break;
+            }
+
+            for ( CheckModel subCheck : check.getSubChecks()){
+                if ( !subCheck.getChecked() ){
+                    todosChecados = 0;
                     break;
                 }
             }
         }
+
         return todosChecados;
     }
 

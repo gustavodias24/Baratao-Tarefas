@@ -211,7 +211,7 @@ public class VisualizarTarefaActivity extends AppCompatActivity {
         });
 
         mainBinding.btnAviso.setOnClickListener( view -> {
-            enviarPushParaTodos("Aviso!", "Resta apenas 1 dia para terminar o prazo da tarefa " + tarefaSelecionada.getNomeTarefa());
+            enviarPushParaTodos("Prazo Vencendo!", "Resta apenas 01 dia para terminar o prazo da tarefa " + tarefaSelecionada.getNomeTarefa());
         });
 
         mainBinding.btnFinalizarTarefa.setOnClickListener(view -> {
@@ -220,7 +220,7 @@ public class VisualizarTarefaActivity extends AppCompatActivity {
 
             refTarefas.child(idTarefa).setValue(tarefaSelecionada).addOnCompleteListener( task -> {
                dialogCarregando.dismiss();
-                enviarPushParaTodos("Aviso!", "Acabou o prazo da tarefa " + tarefaSelecionada.getNomeTarefa());
+                enviarPushParaTodos("Prazo Esgotado !", "Acabou o prazo da tarefa " + tarefaSelecionada.getNomeTarefa());
                 Toast.makeText(this, "Tarefa Expirada", Toast.LENGTH_SHORT).show();
             });
 
