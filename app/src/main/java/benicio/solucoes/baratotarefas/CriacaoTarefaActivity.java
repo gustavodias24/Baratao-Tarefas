@@ -60,6 +60,7 @@ import benicio.solucoes.baratotarefas.service.FileNameUtils;
 public class CriacaoTarefaActivity extends AppCompatActivity {
 
     private String idCriador = "";
+    private String tokenCriador = "";
 
     private Dialog dialogSetarHoras;
     private String horasPrazo = "00:00";
@@ -196,7 +197,7 @@ public class CriacaoTarefaActivity extends AppCompatActivity {
                        notificacaoObservadores.getListaToken().add(userObs.getToken());
                    }
 
-                   notificacaoObservadores.getListaToken().add(idCriador);
+                   notificacaoResponsaveis.getListaToken().add(tokenCriador);
 
                    refNotificacoes.child(UUID.randomUUID().toString()).setValue(notificacaoResponsaveis).addOnCompleteListener( taskNotResponsaveis -> {
                        refNotificacoes.child(UUID.randomUUID().toString()).setValue(notificacaoObservadores).addOnCompleteListener( taskNotifObservaores -> {
@@ -237,6 +238,7 @@ public class CriacaoTarefaActivity extends AppCompatActivity {
                     assert userDado != null;
                     if ( userDado.getEmail().equals(user.getEmail())){
                         idCriador = userDado.getId();
+                        tokenCriador = userDado.getToken();
                         break;
                     }
                 }

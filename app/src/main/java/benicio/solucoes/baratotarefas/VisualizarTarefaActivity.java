@@ -56,7 +56,8 @@ import benicio.solucoes.baratotarefas.model.UserModel;
 import benicio.solucoes.baratotarefas.service.FileNameUtils;
 
 public class VisualizarTarefaActivity extends AppCompatActivity {
-    private String idCriador;
+    private String idCriador = "";
+    private String tokenCriador = "";
 
     private Dialog dialogSubCheck, dialogCriarCheck;
     private AdapterChecks adapterSubCheck;
@@ -190,7 +191,7 @@ public class VisualizarTarefaActivity extends AppCompatActivity {
                 notificacaoResponsaveis.getListaToken().add(userObs.getToken());
             }
 
-            notificacaoResponsaveis.getListaToken().add(idCriador);
+            notificacaoResponsaveis.getListaToken().add(tokenCriador);
 
             refNotificacoes.child(UUID.randomUUID().toString()).setValue(notificacaoResponsaveis).addOnCompleteListener(taskNotifObservaores -> {
                 Toast.makeText(this, "Solicitação enviada!", Toast.LENGTH_LONG).show();
@@ -591,6 +592,7 @@ public class VisualizarTarefaActivity extends AppCompatActivity {
                     assert userDado != null;
                     if ( userDado.getEmail().equals(user.getEmail())){
                         idCriador = userDado.getId();
+                        tokenCriador = userDado.getToken();
                         break;
                     }
                 }

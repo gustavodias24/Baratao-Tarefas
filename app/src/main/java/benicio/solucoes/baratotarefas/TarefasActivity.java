@@ -46,7 +46,9 @@ import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.RemoteMessage;
 import com.squareup.picasso.Picasso;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -60,9 +62,8 @@ import benicio.solucoes.baratotarefas.model.TarefaModel;
 import benicio.solucoes.baratotarefas.model.UserModel;
 
 public class TarefasActivity extends AppCompatActivity {
-
+    private SimpleDateFormat sdf;
     private boolean filtroCompleto = false;
-
     private String dataInicialFiltro = "", dataFinalFiltro = "", nomeFiltro = "";
     private String idCriador = "";
     private RecyclerView recyclerTarefas;
@@ -77,13 +78,15 @@ public class TarefasActivity extends AppCompatActivity {
     private String emailLogado ;
     private Dialog dialogFiltro,dialogCarregando;
 
-    @SuppressLint("ResourceType")
+    @SuppressLint({"ResourceType", "SimpleDateFormat"})
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mainBinding = ActivityTarefasBinding.inflate(getLayoutInflater());
         setContentView(mainBinding.getRoot());
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+
+        sdf  = new SimpleDateFormat("dd/MM/yyyy");
 
         Picasso.get().load(R.raw.semtarefas).into(mainBinding.semtarefaimage);
         getSupportActionBar().setTitle("TAREFAS");
@@ -168,7 +171,12 @@ public class TarefasActivity extends AppCompatActivity {
         });
 
         filtroBinding.filtrar.setOnClickListener( view -> {
+            dataInicialFiltro = filtroBinding.dataInicialField.getText().toString();
+            dataFinalFiltro = filtroBinding.dataFinalField.getText().toString();
+            nomeFiltro = filtroBinding.nomeField.getText().toString();
             filtroCompleto = true;
+            listarTarefas();
+            dialogFiltro.dismiss();
         });
 
 
@@ -237,13 +245,56 @@ public class TarefasActivity extends AppCompatActivity {
                                 }
                             }
                         }
+
                         if ( addTarefa ){
                             if ( filtros.isEmpty() || filtros.size() == 3 ){
-                                tarefas.add(tarefa);
+                                addTarefa = true;
                             }else{
                                 if ( filtros.contains(tarefa.getStatus())){
-                                    tarefas.add(tarefa);
+                                    addTarefa = false;
                                 }
+                            }
+
+                            if ( filtroCompleto ){
+                                if ( !dataFinalFiltro.isEmpty() && !dataInicialFiltro.isEmpty()){
+                                    try{
+                                        Date dataDoAgendamento = sdf.parse(tarefa.getData());
+                                        Date dataInicial = sdf.parse(dataInicialFiltro);
+                                        Date dataFinal = sdf.parse(dataFinalFiltro);
+
+                                        Log.d("mayara", "onDataChange: dataDoAgendamento " + dataDoAgendamento);
+                                        Log.d("mayara", "onDataChange: dataInicial " + dataInicial);
+                                        Log.d("mayara", "onDataChange: dataFinal "  + dataFinal);
+                                        if ( dataDoAgendamento.after(dataInicial) && dataDoAgendamento.before(dataFinal) ){
+                                            addTarefa = true;
+                                        }else{
+                                            addTarefa = false;
+                                        }
+                                    }catch (Exception ignored){}
+                                }
+
+                                if ( !nomeFiltro.isEmpty() && addTarefa){
+                                    for ( UserModel responsaveis : tarefa.getUsuariosResponsaveis()){
+                                        if ( responsaveis.getNome().trim().toLowerCase().contains(nomeFiltro.trim().toLowerCase())){
+                                            addTarefa = true;
+                                            break;
+                                        }
+                                    }
+
+                                    if ( !addTarefa ){
+                                        for ( UserModel observadores : tarefa.getUsuariosObservadores()){
+                                            if ( observadores.getNome().trim().toLowerCase().contains(nomeFiltro.trim().toLowerCase())){
+                                                addTarefa = true;
+                                                break;
+                                            }
+                                        }
+                                    }
+
+                                }
+                            }// fim filtro completo
+
+                            if ( addTarefa ){
+                                tarefas.add(tarefa);
                             }
                         }
                     }
