@@ -48,6 +48,7 @@ import benicio.solucoes.baratotarefas.databinding.ActivityCriacaoTarefaBinding;
 import benicio.solucoes.baratotarefas.databinding.LayoutCriarCheckBinding;
 import benicio.solucoes.baratotarefas.databinding.LayoutCriarSubCheckBinding;
 import benicio.solucoes.baratotarefas.databinding.LayoutExibirUsersBinding;
+import benicio.solucoes.baratotarefas.databinding.LayoutSetarHorasBinding;
 import benicio.solucoes.baratotarefas.databinding.LoadingScreenBinding;
 import benicio.solucoes.baratotarefas.model.CheckModel;
 import benicio.solucoes.baratotarefas.model.FileModel;
@@ -58,6 +59,10 @@ import benicio.solucoes.baratotarefas.service.FileNameUtils;
 
 public class CriacaoTarefaActivity extends AppCompatActivity {
 
+    private String idCriador = "";
+
+    private Dialog dialogSetarHoras;
+    private String horasPrazo = "00:00";
     private DatabaseReference refNotificacoes = FirebaseDatabase.getInstance().getReference().child("notificacoes");
 
     private FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
@@ -137,6 +142,7 @@ public class CriacaoTarefaActivity extends AppCompatActivity {
         Date date = new Date();
         @SuppressLint("SimpleDateFormat") DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
         dataPrazo = dateFormat.format(date.getTime());
+        mainBinding.textInformativoHorasData.setText("Tarefa vai terminar no dia " + dataPrazo + " às " + horasPrazo);
         mainBinding.procurarResponsavel.setOnClickListener( view -> {
             atualizarListaDeSelecaoDeUsuarios(dialogExibirPessoalResponsavel);
         });
@@ -149,10 +155,11 @@ public class CriacaoTarefaActivity extends AppCompatActivity {
             String formattedMonth = String.format(Locale.getDefault(), "%02d", i1 + 1);
             String formattedDay = String.format(Locale.getDefault(), "%02d", i2);
             dataPrazo = formattedDay + "/" + formattedMonth  + "/"  + i;
+            dialogSetarHoras.show();
         });
 
         mainBinding.concluir.setOnClickListener( view -> {
-            String hora = mainBinding.tempoField.getText().toString();
+            String hora = horasPrazo;
             String descri = mainBinding.descricaoField.getEditText().getText().toString();
             String tituloTarefa = mainBinding.nomeField.getEditText().getText().toString();
 
@@ -170,7 +177,8 @@ public class CriacaoTarefaActivity extends AppCompatActivity {
                     listaFilesTarefa,
                     dataPrazo,
                     hora,
-                    0
+                    0,
+                    idCriador
             );
 
             dialogCarregando.show();
@@ -188,6 +196,8 @@ public class CriacaoTarefaActivity extends AppCompatActivity {
                        notificacaoObservadores.getListaToken().add(userObs.getToken());
                    }
 
+                   notificacaoObservadores.getListaToken().add(idCriador);
+
                    refNotificacoes.child(UUID.randomUUID().toString()).setValue(notificacaoResponsaveis).addOnCompleteListener( taskNotResponsaveis -> {
                        refNotificacoes.child(UUID.randomUUID().toString()).setValue(notificacaoObservadores).addOnCompleteListener( taskNotifObservaores -> {
                            finish();
@@ -203,6 +213,7 @@ public class CriacaoTarefaActivity extends AppCompatActivity {
             });
         });
 
+        configurarDialogSetarHoras();
         configurarRecyclerFiles();
         configurarRecyclerResponsaveisSelecionados();
         configurarRecyclerObservadoresSelecionados();
@@ -212,6 +223,51 @@ public class CriacaoTarefaActivity extends AppCompatActivity {
 //        configurarDialogSelecionarUsuario();
         configurarDialogSelecionarObservadores();
         configurarDialogSubCheck();
+        pegarIdCriador();
+    }
+
+    private void pegarIdCriador(){
+        dialogCarregando.show();
+        refUsers.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                dialogCarregando.dismiss();
+                for ( DataSnapshot dado : snapshot.getChildren()){
+                    UserModel userDado = dado.getValue(UserModel.class);
+                    assert userDado != null;
+                    if ( userDado.getEmail().equals(user.getEmail())){
+                        idCriador = userDado.getId();
+                        break;
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                dialogCarregando.dismiss();
+                Toast.makeText(CriacaoTarefaActivity.this, error.getMessage(), Toast.LENGTH_SHORT).show();
+                finish();
+            }
+        });
+    }
+    @SuppressLint("SetTextI18n")
+    private void configurarDialogSetarHoras() {
+        AlertDialog.Builder b = new AlertDialog.Builder(this);
+        b.setCancelable(false);
+        LayoutSetarHorasBinding setarHorasBinding = LayoutSetarHorasBinding.inflate(getLayoutInflater());
+
+        setarHorasBinding.concluir.setOnClickListener(view -> {
+            dialogSetarHoras.dismiss();
+
+            if ( !setarHorasBinding.tempoField.getText().toString().isEmpty() ){
+                horasPrazo = setarHorasBinding.tempoField.getText().toString();
+            }
+
+            mainBinding.textInformativoHorasData.setText("Tarefa vai terminar no dia " + dataPrazo + " às " + horasPrazo);
+        });
+
+        b.setView(setarHorasBinding.getRoot());
+        dialogSetarHoras = b.create();
     }
 
     private void atualizarListaDeSelecaoDeUsuarios(Dialog dialogParaAbrir){

@@ -61,6 +61,10 @@ import benicio.solucoes.baratotarefas.model.UserModel;
 
 public class TarefasActivity extends AppCompatActivity {
 
+    private boolean filtroCompleto = false;
+
+    private String dataInicialFiltro = "", dataFinalFiltro = "", nomeFiltro = "";
+    private String idCriador = "";
     private RecyclerView recyclerTarefas;
     private AdapterTarefas adapterTarefas;
     private List<TarefaModel> tarefas = new ArrayList<>();
@@ -93,9 +97,13 @@ public class TarefasActivity extends AppCompatActivity {
             startActivity(new Intent(this, CriacaoTarefaActivity.class));
         });
 
-        mainBinding.filtroBtn.setOnClickListener(view -> dialogFiltro.show());
+        mainBinding.filtroBtn.setOnClickListener(view -> {
+            filtroCompleto = false;
+            dialogFiltro.show();
+        });
 
         configurarDialogCarregando();
+        pegarIdCriador();
         configurarDialogFiltro();
         configurarRecyclerTarefas();
         guardarToken();
@@ -126,7 +134,6 @@ public class TarefasActivity extends AppCompatActivity {
 
     private void configurarDialogFiltro(){
         AlertDialog.Builder b = new AlertDialog.Builder(this);
-        b.setTitle("Filtrar Tarefas");
         LayoutFiltroBinding filtroBinding = LayoutFiltroBinding.inflate(getLayoutInflater());
 
         filtroBinding.checkBoxPendentes.setOnClickListener(view -> {
@@ -139,8 +146,6 @@ public class TarefasActivity extends AppCompatActivity {
             listarTarefas();
         });
 
-
-
         filtroBinding.checkBoxConcluidos.setOnClickListener(view -> {
             if (filtroBinding.checkBoxConcluidos.isChecked() ){
                 filtros.add(2);
@@ -151,8 +156,6 @@ public class TarefasActivity extends AppCompatActivity {
             listarTarefas();
         });
 
-
-
         filtroBinding.checkBoxVencidos.setOnClickListener(view -> {
             if (filtroBinding.checkBoxVencidos.isChecked() ){
                 filtros.add(1);
@@ -162,6 +165,10 @@ public class TarefasActivity extends AppCompatActivity {
             }
 
             listarTarefas();
+        });
+
+        filtroBinding.filtrar.setOnClickListener( view -> {
+            filtroCompleto = true;
         });
 
 
@@ -199,18 +206,27 @@ public class TarefasActivity extends AppCompatActivity {
                 if ( snapshot.exists() ){
                     tarefas.clear();
                     for (DataSnapshot dado : snapshot.getChildren()){
+
                         TarefaModel tarefa = dado.getValue(TarefaModel.class);
+
 
                         boolean addTarefa = false;
 
-                        if ( tarefa.getUsuariosObservadores() != null){
-                            for( UserModel usuarioModel : tarefa.getUsuariosObservadores()){
-                                if( usuarioModel.getEmail().equals(emailLogado)){
-                                    addTarefa = true;
-                                    break;
+                        if ( tarefa.getIdCriador().equals(idCriador) ) {
+                            addTarefa = true;
+                        }
+
+                        if ( !addTarefa ){
+                            if ( tarefa.getUsuariosObservadores() != null){
+                                for( UserModel usuarioModel : tarefa.getUsuariosObservadores()){
+                                    if( usuarioModel.getEmail().equals(emailLogado) ){
+                                        addTarefa = true;
+                                        break;
+                                    }
                                 }
                             }
                         }
+
                         if ( !addTarefa ){
                             if( tarefa.getUsuariosResponsaveis() != null){
                                 for ( UserModel usuarioModel : tarefa.getUsuariosResponsaveis()){
@@ -246,6 +262,33 @@ public class TarefasActivity extends AppCompatActivity {
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
                 dialogCarregando.dismiss();
+            }
+        });
+    }
+
+    private void pegarIdCriador(){
+
+        dialogCarregando.show();
+        refUsers.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                dialogCarregando.dismiss();
+                for ( DataSnapshot dado : snapshot.getChildren()){
+                    UserModel userDado = dado.getValue(UserModel.class);
+                    assert userDado != null;
+                    if ( userDado.getEmail().equals(user.getEmail())){
+                        idCriador = userDado.getId();
+                        listarTarefas();
+                        break;
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                dialogCarregando.dismiss();
+                Toast.makeText(TarefasActivity.this, error.getMessage(), Toast.LENGTH_SHORT).show();
+                finish();
             }
         });
     }

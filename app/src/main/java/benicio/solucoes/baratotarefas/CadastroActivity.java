@@ -82,50 +82,48 @@ public class CadastroActivity extends AppCompatActivity {
             UserModel novoUsuario = new UserModel();
 
             String id = Base64.getEncoder().encodeToString(UUID.randomUUID().toString().getBytes());
-            Log.d(TAG, "onCreate: "+ id);
+            Log.d(TAG, "onCreate: " + id);
             novoUsuario.setId(id);
             novoUsuario.setEmail(mainBinding.emailField.getEditText().getText().toString().trim());
             novoUsuario.setLogin(mainBinding.loginField.getEditText().getText().toString().trim());
             novoUsuario.setNome(mainBinding.nomeField.getEditText().getText().toString().trim());
             novoUsuario.setSenha(mainBinding.senhaField.getEditText().getText().toString().trim());
 
-            if ( !novoUsuario.getEmail().isEmpty() && !novoUsuario.getSenha().isEmpty() ){
+            if (!novoUsuario.getEmail().isEmpty() && !novoUsuario.getSenha().isEmpty()) {
+                if (imageUri != null) {
 
                 dialogCarregando.show();
 
                 auth.createUserWithEmailAndPassword(novoUsuario.getEmail(), novoUsuario.getSenha()).addOnCompleteListener(criarTask -> {
                     if (criarTask.isSuccessful()) {
-                        if (imageUri != null){
-                            UploadTask uploadTask = imgRef.child(novoUsuario.getId() + ".jpg").putFile(imageUri);
+                        UploadTask uploadTask = imgRef.child(novoUsuario.getId() + ".jpg").putFile(imageUri);
 
-                            uploadTask.addOnCompleteListener( uploadImageTask -> {
-                                if (uploadImageTask.isSuccessful()){
-                                    imgRef.child(novoUsuario.getId() + ".jpg")
-                                            .getDownloadUrl().addOnCompleteListener(uri ->{
-                                                String linkImagePerfil =  uri.getResult().toString();
-                                                novoUsuario.setLinkImageProfile(linkImagePerfil);
-                                                refUsuarios.child(novoUsuario.getId()).setValue(novoUsuario).addOnCompleteListener( taskUsuario -> {
-                                                    if ( taskUsuario.isSuccessful() ){
-                                                        auth.signInWithEmailAndPassword(novoUsuario.getEmail(), novoUsuario.getSenha()).addOnCompleteListener( logarTask -> {
-                                                            if ( logarTask.isSuccessful()){
-                                                                Toast.makeText(CadastroActivity.this, "Usuário criado com sucesso.", Toast.LENGTH_SHORT).show();
-                                                                startActivity(new Intent(this, TarefasActivity.class));
-                                                            }else{
-                                                                exibirError("Conta criada, volte e faça login!");
-                                                            }
-                                                        });
-                                                    }else{
-                                                        exibirError("Erro de conexão, tente novamente.");
-                                                    }
-                                                });
+                        uploadTask.addOnCompleteListener(uploadImageTask -> {
+                            if (uploadImageTask.isSuccessful()) {
+                                imgRef.child(novoUsuario.getId() + ".jpg")
+                                        .getDownloadUrl().addOnCompleteListener(uri -> {
+                                            String linkImagePerfil = uri.getResult().toString();
+                                            novoUsuario.setLinkImageProfile(linkImagePerfil);
+                                            refUsuarios.child(novoUsuario.getId()).setValue(novoUsuario).addOnCompleteListener(taskUsuario -> {
+                                                if (taskUsuario.isSuccessful()) {
+                                                    auth.signInWithEmailAndPassword(novoUsuario.getEmail(), novoUsuario.getSenha()).addOnCompleteListener(logarTask -> {
+                                                        if (logarTask.isSuccessful()) {
+                                                            Toast.makeText(CadastroActivity.this, "Usuário criado com sucesso.", Toast.LENGTH_SHORT).show();
+                                                            startActivity(new Intent(this, TarefasActivity.class));
+                                                        } else {
+                                                            exibirError("Conta criada, volte e faça login!");
+                                                        }
+                                                    });
+                                                } else {
+                                                    exibirError("Erro de conexão, tente novamente.");
+                                                }
                                             });
-                                }else{
-                                    exibirError("Erro ao salvar imagem de perfil.");
-                                }
-                            });
-                        }else{
-                            exibirError("Adicione uma imagem de perfil.");
-                        }
+                                        });
+                            } else {
+                                exibirError("Erro ao salvar imagem de perfil.");
+                            }
+                        });
+
                     } else {
                         try {
                             throw criarTask.getException();
@@ -140,7 +138,8 @@ public class CadastroActivity extends AppCompatActivity {
                         }
                     }
                 });
-            }
+            }else{exibirError("Adicione uma imagem de perfil.");}
+        }
 
         });
 

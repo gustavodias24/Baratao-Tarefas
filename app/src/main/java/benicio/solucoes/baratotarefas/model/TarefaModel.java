@@ -6,6 +6,8 @@ import java.util.List;
 public class TarefaModel {
     String nomeTarefa;
     String id;
+
+    String idCriador;
     List<UserModel> usuariosResponsaveis = new ArrayList<>();
     List<UserModel> usuariosObservadores = new ArrayList<>();
 
@@ -17,7 +19,7 @@ public class TarefaModel {
 
     int status;
 
-    public TarefaModel(String nomeTarefa, String id, List<UserModel> usuariosResponsaveis, List<UserModel> usuariosObservadores, List<CheckModel> checks, String descri, List<FileModel> arquivos, String data, String hora, int status) {
+    public TarefaModel(String nomeTarefa, String id, List<UserModel> usuariosResponsaveis, List<UserModel> usuariosObservadores, List<CheckModel> checks, String descri, List<FileModel> arquivos, String data, String hora, int status, String idCriador) {
         this.nomeTarefa = nomeTarefa;
         this.id = id;
         this.usuariosResponsaveis = usuariosResponsaveis;
@@ -28,6 +30,15 @@ public class TarefaModel {
         this.data = data;
         this.hora = hora;
         this.status = status;
+        this.idCriador = idCriador;
+    }
+
+    public String getIdCriador() {
+        return idCriador;
+    }
+
+    public void setIdCriador(String idCriador) {
+        this.idCriador = idCriador;
     }
 
     public String getNomeTarefa() {

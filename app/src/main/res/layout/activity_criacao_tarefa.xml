@@ -214,25 +214,13 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
-        <TextView
-            android:id="@+id/textView6"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Hora de 00:00 até 23:59" />
 
-        <com.vicmikhailau.maskededittext.MaskedEditText
-            android:id="@+id/tempoField"
+        <TextView
+            android:id="@+id/textInformativoHorasData"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/back_w_round"
-            android:hint="Tempo"
-            android:inputType="datetime|time"
-            android:paddingStart="16dp"
-            android:paddingTop="24dp"
-            android:paddingEnd="16dp"
-            android:paddingBottom="24dp"
-            android:textColor="#000000"
-            app:mask="##:##" />
+            android:text="Tarefa vai terminar: "
+            android:textColor="#000000" />
 
         <Button
             android:id="@+id/concluir"

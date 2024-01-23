@@ -58,16 +58,6 @@
     </com.google.android.material.textfield.TextInputLayout>
 
     <Button
-        android:id="@+id/cadastrar_check_btn"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:backgroundTint="@color/verde"
-        android:text="CADASTRAR"
-        android:textAllCaps="true"
-        android:textStyle="bold" />
-
-    <Button
         android:id="@+id/criarSubCheck"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -121,4 +111,14 @@
         android:background="@drawable/back_r_round">
 
     </androidx.recyclerview.widget.RecyclerView>
+
+    <Button
+        android:id="@+id/cadastrar_check_btn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:backgroundTint="@color/verde"
+        android:text="salvar check"
+        android:textAllCaps="true"
+        android:textStyle="bold" />
 </LinearLayout></ScrollView>

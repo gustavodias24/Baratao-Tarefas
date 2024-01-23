@@ -1,25 +1,127 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="8dp"
-    android:orientation="vertical">
+    android:fillViewport="true">
 
-    <CheckBox
-        android:id="@+id/checkBoxPendentes"
+    <LinearLayout
+
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Pendentes" />
+        android:background="@color/amarelo"
+        android:orientation="vertical"
+        android:padding="8dp">
 
-    <CheckBox
-        android:id="@+id/checkBoxConcluidos"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Concluídos" />
+        <TextView
+            android:id="@+id/textView12"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Filtrar Tarefas"
+            android:textColor="#000000"
+            android:textSize="24sp"
+            android:textStyle="bold" />
 
-    <CheckBox
-        android:id="@+id/checkBoxVencidos"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Vencidos" />
-</LinearLayout>
+        <CheckBox
+            android:id="@+id/checkBoxPendentes"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:background="@drawable/back_w_round"
+            android:text="Pendentes"
+            android:textColor="#000000"
+            android:textStyle="bold" />
+
+        <CheckBox
+            android:id="@+id/checkBoxConcluidos"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="4dp"
+            android:background="@drawable/back_w_round"
+            android:text="Concluídos"
+            android:textColor="#000000"
+            android:textStyle="bold" />
+
+        <CheckBox
+            android:id="@+id/checkBoxVencidos"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/back_w_round"
+            android:text="Vencidos"
+            android:textColor="#000000"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/textView11"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Período"
+            android:textColor="#000000" />
+
+        <com.vicmikhailau.maskededittext.MaskedEditText
+            android:id="@+id/dataInicialField"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/back_w_round"
+            android:hint="Data Inicial"
+            android:inputType="datetime|date"
+            android:paddingStart="16dp"
+            android:paddingTop="24dp"
+            android:paddingEnd="16dp"
+            android:paddingBottom="24dp"
+            android:textColor="#000000"
+            app:mask="##/##/####" />
+
+        <com.vicmikhailau.maskededittext.MaskedEditText
+            android:id="@+id/dataFinalField"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/back_w_round"
+            android:hint="Data Final"
+            android:inputType="datetime|date"
+            android:paddingStart="16dp"
+            android:paddingTop="24dp"
+            android:paddingEnd="16dp"
+            android:paddingBottom="24dp"
+            android:textColor="#000000"
+            app:mask="##/##/####" />
+
+        <TextView
+            android:id="@+id/textView13"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Nome Responsável/Obeservador/Criador"
+            android:textColor="#000000" />
+
+        <com.vicmikhailau.maskededittext.MaskedEditText
+            android:id="@+id/nomeField"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/back_w_round"
+            android:hint="Nome"
+            android:inputType="text"
+            android:paddingStart="16dp"
+            android:paddingTop="24dp"
+            android:paddingEnd="16dp"
+            android:paddingBottom="24dp"
+            android:textColor="#000000"
+           />
+
+        <Button
+            android:id="@+id/filtrar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:backgroundTint="@color/verde"
+            android:text="filtrar"
+            android:textAllCaps="true"
+            android:textColor="#FFFFFF"
+            android:textStyle="bold"
+            app:iconTint="#FFFFFF" />
+    </LinearLayout>
+
+</ScrollView>

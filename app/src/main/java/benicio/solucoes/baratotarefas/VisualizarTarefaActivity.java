@@ -56,6 +56,7 @@ import benicio.solucoes.baratotarefas.model.UserModel;
 import benicio.solucoes.baratotarefas.service.FileNameUtils;
 
 public class VisualizarTarefaActivity extends AppCompatActivity {
+    private String idCriador;
 
     private Dialog dialogSubCheck, dialogCriarCheck;
     private AdapterChecks adapterSubCheck;
@@ -114,6 +115,7 @@ public class VisualizarTarefaActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         configurarDialogCarregando();
+        pegarIdCriador();
 
         dialogCarregando.show();
 
@@ -187,6 +189,8 @@ public class VisualizarTarefaActivity extends AppCompatActivity {
             for ( UserModel userObs : tarefaSelecionada.getUsuariosResponsaveis()){
                 notificacaoResponsaveis.getListaToken().add(userObs.getToken());
             }
+
+            notificacaoResponsaveis.getListaToken().add(idCriador);
 
             refNotificacoes.child(UUID.randomUUID().toString()).setValue(notificacaoResponsaveis).addOnCompleteListener(taskNotifObservaores -> {
                 Toast.makeText(this, "Solicitação enviada!", Toast.LENGTH_LONG).show();
@@ -353,13 +357,19 @@ public class VisualizarTarefaActivity extends AppCompatActivity {
         }
 
 
+        //verifica se é responsavel ou criador
         boolean isAdmin = false;
-        for (UserModel userModel : tarefaSelecionada.getUsuariosResponsaveis()){
-            if (userModel.getEmail().equals(user.getEmail())){
-                isAdmin = true;
-                break;
+        if ( tarefaSelecionada.getIdCriador().equals(idCriador)){
+            isAdmin = true;
+        }else{
+            for (UserModel userModel : tarefaSelecionada.getUsuariosResponsaveis()){
+                if (userModel.getEmail().equals(user.getEmail())){
+                    isAdmin = true;
+                    break;
+                }
             }
         }
+
         if ( !isAdmin ){
             mainBinding.procurarResponsavel.setVisibility(View.GONE);
             mainBinding.adicionarCheck.setVisibility(View.GONE);
@@ -567,6 +577,32 @@ public class VisualizarTarefaActivity extends AppCompatActivity {
         //FIM configurar recyclerExibicao dos usuarios
         b.setView(usersBinding.getRoot());
         dialogExibirSelecionarObservadores = b.create();
+    }
+
+    private void pegarIdCriador(){
+
+        dialogCarregando.show();
+        refUsers.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                dialogCarregando.dismiss();
+                for ( DataSnapshot dado : snapshot.getChildren()){
+                    UserModel userDado = dado.getValue(UserModel.class);
+                    assert userDado != null;
+                    if ( userDado.getEmail().equals(user.getEmail())){
+                        idCriador = userDado.getId();
+                        break;
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                dialogCarregando.dismiss();
+                Toast.makeText(VisualizarTarefaActivity.this, error.getMessage(), Toast.LENGTH_SHORT).show();
+                finish();
+            }
+        });
     }
 
 }
