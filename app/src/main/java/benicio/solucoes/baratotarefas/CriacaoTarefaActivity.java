@@ -90,12 +90,17 @@ public class CriacaoTarefaActivity extends AppCompatActivity {
 
 
     private List<FileModel> listaDeArquivosDoCheck = new ArrayList<>();
+    private List<FileModel> listaDeArquivosDoSubCheck = new ArrayList<>();
     private List<CheckModel> listaDeSubChecks = new ArrayList<>();
     private AdapterArquivos adapterFilesCheck;
     private AdapterChecks adapterSubCheck;
 
+    private AdapterArquivos adapterFilesSubCheck;
+
+
     private static final int REQUEST_PICK_FILE = 1;
     private static final int REQUEST_PICK_FILE_IN_CHECK = 2;
+    private static final int REQUEST_PICK_FILE_IN_SUB_CHECK = 24;
 
     private String idTarefa;
     private StorageReference filesTarefa;
@@ -464,6 +469,41 @@ public class CriacaoTarefaActivity extends AppCompatActivity {
                 }
             });
 
+        }else if (requestCode == REQUEST_PICK_FILE_IN_SUB_CHECK && resultCode == RESULT_OK ){
+
+            dialogCarregando.show();
+            Uri fileUri = data.getData();
+            String nomeReal = FileNameUtils.getFileName(fileUri, this);
+            String nomeExibicao = FileNameUtils.truncateFileName(nomeReal, 20);
+            String nomeDoBanco = FileNameUtils.fileNameForDb(nomeReal);
+
+            UploadTask uploadTask = filesTarefa.child(nomeDoBanco).putFile(fileUri);
+
+
+            uploadTask.addOnCompleteListener(uploadImageTask -> {
+                if ( uploadImageTask.isSuccessful()){
+                    filesTarefa.child(nomeDoBanco).getDownloadUrl().addOnCompleteListener( uri -> {
+                        String linkImage = uri.getResult().toString();
+                        Toast.makeText(this, "Arquivo Adicionado!", Toast.LENGTH_SHORT).show();
+
+                        listaDeArquivosDoSubCheck.add(new FileModel(
+                                nomeReal,
+                                nomeDoBanco,
+                                nomeExibicao,
+                                linkImage,
+                                idTarefa
+                        ));
+
+                        adapterFilesSubCheck.notifyDataSetChanged();
+
+                        dialogCarregando.dismiss();
+                    });
+                }else{
+                    dialogCarregando.dismiss();
+                    Toast.makeText(this, "Erro ao subir arquivo.", Toast.LENGTH_SHORT).show();
+                }
+            });
+
         }
     }
 
@@ -493,6 +533,17 @@ public class CriacaoTarefaActivity extends AppCompatActivity {
             atualizarListaDeSelecaoDeUsuarios(dialogExibirResponsavelSubCheck);
         });
 
+        subCheckBinding.enviarArquivoInSubCheck.setOnClickListener( view -> {
+            openFilePicker(REQUEST_PICK_FILE_IN_SUB_CHECK);
+        });
+
+        subCheckBinding.recyclerFileInSubCheck.setHasFixedSize(true);
+        subCheckBinding.recyclerFileInSubCheck.setLayoutManager(new LinearLayoutManager(this));
+        subCheckBinding.recyclerFileInSubCheck.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
+        adapterFilesSubCheck = new AdapterArquivos(listaDeArquivosDoSubCheck, this, idTarefa, dialogCarregando);
+        subCheckBinding.recyclerFileInSubCheck.setAdapter(adapterFilesSubCheck);
+
+
         textResponsavelSubCheck = subCheckBinding.textResponsavelSubCheck;
         configurarDialogSelecionarResponsavelSubCheck();
 
@@ -514,9 +565,12 @@ public class CriacaoTarefaActivity extends AppCompatActivity {
                     // Cortar a string do início até a posição da palavra "selecionado!"
                     String resultadoNomeResponsavelSubCheck = subCheckBinding.textResponsavelSubCheck.getText().toString().substring(0, posicaoSelecionado);
                     subCheckNovo.setNomeResponsavel(resultadoNomeResponsavelSubCheck);
-
                 }
 
+                subCheckNovo.getfilesDoCheck().addAll(listaDeArquivosDoSubCheck);
+
+                listaDeArquivosDoSubCheck.clear();
+                adapterFilesSubCheck.notifyDataSetChanged();
                 listaDeSubChecks.add(subCheckNovo);
 
                 adapterSubCheck.notifyDataSetChanged();

@@ -351,7 +351,6 @@ public class TarefasActivity extends AppCompatActivity {
             if ( task.isSuccessful() ){
                 try{
                     dialogCarregando.show();
-
                 }catch (Exception ignored){}
 
                 String token =  task.getResult();
