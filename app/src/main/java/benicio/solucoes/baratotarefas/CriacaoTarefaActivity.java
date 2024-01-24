@@ -19,6 +19,7 @@ import android.provider.OpenableColumns;
 import android.util.Log;
 import android.view.MenuItem;
 import android.widget.CalendarView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -59,6 +60,8 @@ import benicio.solucoes.baratotarefas.service.FileNameUtils;
 
 public class CriacaoTarefaActivity extends AppCompatActivity {
 
+    private TextView textResponsavelSubCheck;
+
     private String idCriador = "";
     private String tokenCriador = "";
 
@@ -84,10 +87,6 @@ public class CriacaoTarefaActivity extends AppCompatActivity {
     private List<UserModel> listaDeUsuariosReponsaveisSelecionados = new ArrayList<>();
     private AdapterUsuarios adapterUsuariosResponsaveisSelecionados;
     private RecyclerView recyclerUsuariosResponsavelSelecionados;
-    
-    
-
-
 
 
     private List<FileModel> listaDeArquivosDoCheck = new ArrayList<>();
@@ -101,7 +100,7 @@ public class CriacaoTarefaActivity extends AppCompatActivity {
     private String idTarefa;
     private StorageReference filesTarefa;
     private Dialog dialogCarregando, dialogCriarCheck, dialogExibirPessoalResponsavel,
-            dialogExibirSelecionarObservadores, dialogSubCheck;
+            dialogExibirSelecionarObservadores, dialogSubCheck, dialogExibirResponsavelSubCheck;
     private ActivityCriacaoTarefaBinding mainBinding;
 
     private RecyclerView recyclerFiles;
@@ -326,6 +325,25 @@ public class CriacaoTarefaActivity extends AppCompatActivity {
     }
 
 
+    private void configurarDialogSelecionarResponsavelSubCheck(){
+        AlertDialog.Builder b = new AlertDialog.Builder(this);
+        LayoutExibirUsersBinding usersBinding = LayoutExibirUsersBinding.inflate(getLayoutInflater());
+        b.setTitle("Selecione o Responsável:");
+        b.setPositiveButton("Fechar", (dialogInterface, i) -> {
+            dialogExibirResponsavelSubCheck.dismiss();
+        });
+        //INICIO configurar recyclerExibicao dos usuarios
+        RecyclerView recyclerExibirUsuariosSelecionaveis = usersBinding.recyclerUsuarios;
+        recyclerExibirUsuariosSelecionaveis.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
+        recyclerExibirUsuariosSelecionaveis.setLayoutManager(new LinearLayoutManager(this));
+        recyclerExibirUsuariosSelecionaveis.setHasFixedSize(true);
+        adapterUsuariosSelecionaveis = new AdapterUsuarios(listaDeUsuariosParaSelecionar, this, true, true, textResponsavelSubCheck, dialogExibirResponsavelSubCheck);
+        recyclerExibirUsuariosSelecionaveis.setAdapter(adapterUsuariosSelecionaveis);
+        //FIM configurar recyclerExibicao dos usuarios
+        b.setView(usersBinding.getRoot());
+        dialogExibirResponsavelSubCheck = b.create();
+    }
+
     private void configurarDialogSelecionarResponsaveis(){
         AlertDialog.Builder b = new AlertDialog.Builder(this);
         LayoutExibirUsersBinding usersBinding = LayoutExibirUsersBinding.inflate(getLayoutInflater());
@@ -471,6 +489,13 @@ public class CriacaoTarefaActivity extends AppCompatActivity {
         AlertDialog.Builder b = new AlertDialog.Builder(this);
         b.setTitle("Adicionar um Sub Check");
         LayoutCriarSubCheckBinding subCheckBinding = LayoutCriarSubCheckBinding.inflate(getLayoutInflater());
+        subCheckBinding.cadastrarResposavelSubCheck.setOnClickListener( view -> {
+            atualizarListaDeSelecaoDeUsuarios(dialogExibirResponsavelSubCheck);
+        });
+
+        textResponsavelSubCheck = subCheckBinding.textResponsavelSubCheck;
+        configurarDialogSelecionarResponsavelSubCheck();
+
         subCheckBinding.cadastrarCheckBtn.setOnClickListener(view -> {
             String nomeSubCheck = subCheckBinding.nomeCheckField.getEditText().getText().toString();
             if ( nomeSubCheck.isEmpty() ) {
@@ -478,12 +503,25 @@ public class CriacaoTarefaActivity extends AppCompatActivity {
             }else{
                 String checkId = UUID.randomUUID().toString();
 
-                listaDeSubChecks.add(new CheckModel(
-                        checkId, idTarefa, nomeSubCheck,"", false
-                ));
+                CheckModel subCheckNovo = new CheckModel(
+                        checkId,
+                        idTarefa, nomeSubCheck,"", false
+                );
+
+                int posicaoSelecionado = subCheckBinding.textResponsavelSubCheck.getText().toString().indexOf("selecionado!");
+
+                if (posicaoSelecionado != -1) {
+                    // Cortar a string do início até a posição da palavra "selecionado!"
+                    String resultadoNomeResponsavelSubCheck = subCheckBinding.textResponsavelSubCheck.getText().toString().substring(0, posicaoSelecionado);
+                    subCheckNovo.setNomeResponsavel(resultadoNomeResponsavelSubCheck);
+
+                }
+
+                listaDeSubChecks.add(subCheckNovo);
 
                 adapterSubCheck.notifyDataSetChanged();
                 subCheckBinding.nomeCheckField.getEditText().setText("");
+                subCheckBinding.textResponsavelSubCheck.setText("Selecione um Responsável");
                 dialogSubCheck.dismiss();
             }
         });

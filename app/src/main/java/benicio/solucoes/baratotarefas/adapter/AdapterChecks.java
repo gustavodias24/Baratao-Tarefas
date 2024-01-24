@@ -58,10 +58,15 @@ public class AdapterChecks extends RecyclerView.Adapter<AdapterChecks.MyViewHold
         return new MyViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_check, parent, false));
     }
 
-    @SuppressLint("NotifyDataSetChanged")
+    @SuppressLint({"NotifyDataSetChanged", "SetTextI18n"})
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
         CheckModel check = listaChecks.get(position);
+
+        try{
+            holder.textResponsavelSubCheck.setText("Responsável pelo SubCheck: " + check.getNomeResponsavel());
+            holder.textResponsavelSubCheck.setVisibility(View.VISIBLE);
+        }catch (Exception ignored){}
 
         if ( check.getChecked() ){
             holder.btnCheck.setChecked(true);
@@ -200,7 +205,7 @@ public class AdapterChecks extends RecyclerView.Adapter<AdapterChecks.MyViewHold
         RadioButton btnCheck;
         ImageButton removeCheck;
         ImageButton editCheck;
-        TextView nomeCheck, arquivosText, subChekcText;
+        TextView nomeCheck, arquivosText, subChekcText, textResponsavelSubCheck;
 
         RecyclerView recyclerFiles, recyclerSubChecks;
         public MyViewHolder(@NonNull View itemView) {
@@ -214,6 +219,7 @@ public class AdapterChecks extends RecyclerView.Adapter<AdapterChecks.MyViewHold
             recyclerSubChecks = itemView.findViewById(R.id.recyclerCheckSubCheckExibicao);
             arquivosText = itemView.findViewById(R.id.textArquivosCheck);
             subChekcText = itemView.findViewById(R.id.textSubChecks);
+            textResponsavelSubCheck = itemView.findViewById(R.id.textResponsavelSubCheck);
         }
     }
 }

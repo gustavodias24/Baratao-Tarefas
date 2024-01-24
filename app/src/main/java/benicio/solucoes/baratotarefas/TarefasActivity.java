@@ -349,7 +349,10 @@ public class TarefasActivity extends AppCompatActivity {
         FirebaseMessaging.getInstance().getToken().addOnCompleteListener(task -> {
             dialogCarregando.dismiss();
             if ( task.isSuccessful() ){
-                dialogCarregando.show();
+                try{
+                    dialogCarregando.show();
+
+                }catch (Exception ignored){}
 
                 String token =  task.getResult();
 

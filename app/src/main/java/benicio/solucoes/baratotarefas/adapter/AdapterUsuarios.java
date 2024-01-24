@@ -2,6 +2,7 @@ package benicio.solucoes.baratotarefas.adapter;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.Dialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,6 +35,13 @@ public class AdapterUsuarios extends RecyclerView.Adapter<AdapterUsuarios.MyView
 
     boolean exibicao;
 
+    boolean modoSubCheck = false;
+
+    TextView textResponsavelSubCheck;
+
+    Dialog dialogSelecaoResponsavelSubCheck;
+
+
 
     public AdapterUsuarios(List<UserModel> listaDeUsuarios, List<UserModel> listaDeUsuariosSelecionados, Activity c, AdapterUsuarios adapterUsuariosSelecionados, boolean exibicao) {
         this.listaDeUsuarios = listaDeUsuarios;
@@ -49,16 +57,26 @@ public class AdapterUsuarios extends RecyclerView.Adapter<AdapterUsuarios.MyView
         this.exibicao = exibicao;
     }
 
+    public AdapterUsuarios(List<UserModel> listaDeUsuarios, Activity c, boolean exibicao, boolean modoSubCheck, TextView textResponsavelSubCheck, Dialog dialogSelecaoResponsavelSubCheck) {
+        this.listaDeUsuarios = listaDeUsuarios;
+        this.c = c;
+        this.exibicao = exibicao;
+        this.modoSubCheck = modoSubCheck;
+        this.textResponsavelSubCheck = textResponsavelSubCheck;
+        this.dialogSelecaoResponsavelSubCheck = dialogSelecaoResponsavelSubCheck;
+    }
+
     @NonNull
     @Override
     public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         return new MyViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_usuario,parent, false));
     }
 
-    @SuppressLint("NotifyDataSetChanged")
+    @SuppressLint({"NotifyDataSetChanged", "SetTextI18n"})
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
         UserModel user = listaDeUsuarios.get(position);
+
 
         holder.profileUser.setVisibility(View.GONE);
         holder.progressProfilePhoto.setVisibility(View.VISIBLE);
@@ -80,40 +98,49 @@ public class AdapterUsuarios extends RecyclerView.Adapter<AdapterUsuarios.MyView
 
         holder.nomeUser.setText(user.getNome());
 
-        if ( !exibicao ){
-            holder.itemView.getRootView().setOnClickListener(view -> {
-                try {
-                    boolean select = true;
+        if ( !modoSubCheck ){
 
-                    for ( UserModel userJaSelecionado : listaDeUsuariosSelecionados){
-                        if ( userJaSelecionado.getEmail().equals(user.getEmail()) ){
-                            Toast.makeText(c, "Esse usuário já foi selecionado!", Toast.LENGTH_SHORT).show();
-                            select = false;
-                            break;
+            if ( !exibicao ){
+                holder.itemView.getRootView().setOnClickListener(view -> {
+                    try {
+                        boolean select = true;
+
+                        for ( UserModel userJaSelecionado : listaDeUsuariosSelecionados){
+                            if ( userJaSelecionado.getEmail().equals(user.getEmail()) ){
+                                Toast.makeText(c, "Esse usuário já foi selecionado!", Toast.LENGTH_SHORT).show();
+                                select = false;
+                                break;
+                            }
                         }
-                    }
 
-                    if ( select ){
-                        listaDeUsuariosSelecionados.add(user);
-                        listaDeUsuarios.remove(position);
-                        Toast.makeText(c, "Usuário adicionado", Toast.LENGTH_SHORT).show();
-                        this.notifyDataSetChanged();
-                        adapterUsuariosSelecionados.notifyDataSetChanged();
-                    }
-                }catch (Exception e){}
+                        if ( select ){
+                            listaDeUsuariosSelecionados.add(user);
+                            listaDeUsuarios.remove(position);
+                            Toast.makeText(c, "Usuário adicionado", Toast.LENGTH_SHORT).show();
+                            this.notifyDataSetChanged();
+                            adapterUsuariosSelecionados.notifyDataSetChanged();
+                        }
+                    }catch (Exception e){}
 
-            });
+                });
+            }else{
+                holder.itemView.getRootView().setClickable(false);
+                holder.removeUser.setVisibility(View.VISIBLE);
+
+                holder.removeUser.setOnClickListener(view -> {
+                    listaDeUsuarios.remove(position);
+                    this.notifyDataSetChanged();
+                });
+            }
         }else{
-            holder.itemView.getRootView().setClickable(false);
-            holder.removeUser.setVisibility(View.VISIBLE);
-
-            holder.removeUser.setOnClickListener(view -> {
-                listaDeUsuarios.remove(position);
-                this.notifyDataSetChanged();
+            holder.itemView.getRootView().setOnClickListener(view -> {
+                Toast.makeText(c, user.getNome() + " selecionado!", Toast.LENGTH_SHORT).show();
+                textResponsavelSubCheck.setText( user.getNome() + " selecionado!");
+                try{
+                    dialogSelecaoResponsavelSubCheck.dismiss();
+                }catch (Exception ignored){}
             });
         }
-
-
 
     }
 

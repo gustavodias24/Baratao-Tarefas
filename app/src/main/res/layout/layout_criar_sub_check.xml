@@ -45,5 +45,51 @@
         android:textAllCaps="true"
         android:textStyle="bold" />
 
+    <Button
+        android:id="@+id/cadastrar_resposavel_subCheck"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:backgroundTint="@color/verde"
+        android:text="responsável"
+        android:textAllCaps="true"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/textResponsavelSubCheck"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="Selecione um Responsável"
+        android:textColor="#000000"
+        android:textStyle="bold" />
+
+    <Button
+        android:id="@+id/enviarArquivoInSubCheck"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:layout_weight="0"
+        android:backgroundTint="@color/verde"
+        android:isScrollContainer="false"
+        android:paddingTop="16dp"
+        android:paddingBottom="16dp"
+        android:pointerIcon="cell"
+        android:text="Arquivos"
+        android:textAllCaps="true"
+        android:textColor="#FFFFFF"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        app:icon="@drawable/baseline_insert_drive_file_24"
+        app:iconGravity="textEnd"
+        app:iconTint="#FFFFFF"
+        app:iconTintMode="src_in" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerFileInSubCheck"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/back_r_round"/>
+
 
 </LinearLayout></ScrollView>

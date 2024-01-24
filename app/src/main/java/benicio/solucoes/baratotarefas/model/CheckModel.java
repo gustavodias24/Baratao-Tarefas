@@ -5,6 +5,8 @@ import java.util.List;
 
 public class CheckModel {
     String id, idTarefa, checkNome, comentario;
+
+    String nomeResponsavel;
     Boolean isChecked;
 
     List<FileModel> filesDoCheck = new ArrayList<>();
@@ -22,7 +24,13 @@ public class CheckModel {
         this.isChecked = isChecked;
     }
 
+    public String getNomeResponsavel() {
+        return nomeResponsavel;
+    }
 
+    public void setNomeResponsavel(String nomeResponsavel) {
+        this.nomeResponsavel = nomeResponsavel;
+    }
 
     public List<CheckModel> getSubChecks() {
         return subChecks;
