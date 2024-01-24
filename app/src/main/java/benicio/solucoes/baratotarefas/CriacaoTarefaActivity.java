@@ -503,7 +503,6 @@ public class CriacaoTarefaActivity extends AppCompatActivity {
                     Toast.makeText(this, "Erro ao subir arquivo.", Toast.LENGTH_SHORT).show();
                 }
             });
-
         }
     }
 

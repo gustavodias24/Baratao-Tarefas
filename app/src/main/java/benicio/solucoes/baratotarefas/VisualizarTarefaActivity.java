@@ -16,6 +16,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -47,6 +48,7 @@ import benicio.solucoes.baratotarefas.databinding.ActivityVisualizarTarefaBindin
 import benicio.solucoes.baratotarefas.databinding.LayoutCriarCheckBinding;
 import benicio.solucoes.baratotarefas.databinding.LayoutCriarSubCheckBinding;
 import benicio.solucoes.baratotarefas.databinding.LayoutExibirUsersBinding;
+import benicio.solucoes.baratotarefas.databinding.LayoutSetarHorasBinding;
 import benicio.solucoes.baratotarefas.databinding.LoadingScreenBinding;
 import benicio.solucoes.baratotarefas.model.CheckModel;
 import benicio.solucoes.baratotarefas.model.FileModel;
@@ -56,6 +58,14 @@ import benicio.solucoes.baratotarefas.model.UserModel;
 import benicio.solucoes.baratotarefas.service.FileNameUtils;
 
 public class VisualizarTarefaActivity extends AppCompatActivity {
+
+    private TextView textResponsavelSubCheck;
+    private static final int REQUEST_PICK_FILE_IN_SUB_CHECK = 24;
+    private List<FileModel> listaDeArquivosDoSubCheck = new ArrayList<>();
+    private AdapterArquivos adapterFilesSubCheck;
+
+    private Dialog dialogSetarHoras;
+    private String horasPrazo = "00:00";
     private String idCriador = "";
     private String tokenCriador = "";
 
@@ -97,7 +107,7 @@ public class VisualizarTarefaActivity extends AppCompatActivity {
     private Bundle bundle;
     private String idTarefa;
 
-    private Dialog dialogCarregando;
+    private Dialog dialogCarregando,dialogExibirResponsavelSubCheck;
 
     private TarefaModel tarefaSelecionada;
 
@@ -116,6 +126,7 @@ public class VisualizarTarefaActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         configurarDialogCarregando();
+        configurarDialogSetarHoras();
         pegarIdCriador();
 
         dialogCarregando.show();
@@ -145,12 +156,13 @@ public class VisualizarTarefaActivity extends AppCompatActivity {
             String formattedMonth = String.format(Locale.getDefault(), "%02d", i1 + 1);
             String formattedDay = String.format(Locale.getDefault(), "%02d", i2);
             dataPrazo = formattedDay + "/" + formattedMonth  + "/"  + i;
+            dialogSetarHoras.show();
         });
 
         mainBinding.btnConcluir.setOnClickListener( view -> {
             dialogCarregando.show();
 
-            String hora = mainBinding.tempoField.getText().toString();
+            String hora = horasPrazo;
             String descri = mainBinding.descricaoField.getEditText().getText().toString();
             String tituloTarefa = mainBinding.nomeField.getEditText().getText().toString();
 
@@ -232,6 +244,25 @@ public class VisualizarTarefaActivity extends AppCompatActivity {
         });
     }
 
+    @SuppressLint("SetTextI18n")
+    private void configurarDialogSetarHoras() {
+        AlertDialog.Builder b = new AlertDialog.Builder(this);
+        b.setCancelable(false);
+        LayoutSetarHorasBinding setarHorasBinding = LayoutSetarHorasBinding.inflate(getLayoutInflater());
+
+        setarHorasBinding.concluir.setOnClickListener(view -> {
+            dialogSetarHoras.dismiss();
+
+            if ( !setarHorasBinding.tempoField.getText().toString().isEmpty() ){
+                horasPrazo = setarHorasBinding.tempoField.getText().toString();
+            }
+
+            mainBinding.textInformativoHorasData.setText("Tarefa vai terminar no dia " + dataPrazo + " às " + horasPrazo);
+        });
+
+        b.setView(setarHorasBinding.getRoot());
+        dialogSetarHoras = b.create();
+    }
 
     private void openFilePicker(int code) {
         Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
@@ -300,7 +331,40 @@ public class VisualizarTarefaActivity extends AppCompatActivity {
                     Toast.makeText(this, "Erro ao subir arquivo.", Toast.LENGTH_SHORT).show();
                 }
             });
+        }else if (requestCode == REQUEST_PICK_FILE_IN_SUB_CHECK && resultCode == RESULT_OK ){
 
+            dialogCarregando.show();
+            Uri fileUri = data.getData();
+            String nomeReal = FileNameUtils.getFileName(fileUri, this);
+            String nomeExibicao = FileNameUtils.truncateFileName(nomeReal, 20);
+            String nomeDoBanco = FileNameUtils.fileNameForDb(nomeReal);
+
+            UploadTask uploadTask = filesTarefa.child(nomeDoBanco).putFile(fileUri);
+
+
+            uploadTask.addOnCompleteListener(uploadImageTask -> {
+                if ( uploadImageTask.isSuccessful()){
+                    filesTarefa.child(nomeDoBanco).getDownloadUrl().addOnCompleteListener( uri -> {
+                        String linkImage = uri.getResult().toString();
+                        Toast.makeText(this, "Arquivo Adicionado!", Toast.LENGTH_SHORT).show();
+
+                        listaDeArquivosDoSubCheck.add(new FileModel(
+                                nomeReal,
+                                nomeDoBanco,
+                                nomeExibicao,
+                                linkImage,
+                                idTarefa
+                        ));
+
+                        adapterFilesSubCheck.notifyDataSetChanged();
+
+                        dialogCarregando.dismiss();
+                    });
+                }else{
+                    dialogCarregando.dismiss();
+                    Toast.makeText(this, "Erro ao subir arquivo.", Toast.LENGTH_SHORT).show();
+                }
+            });
         }
     }
 
@@ -334,13 +398,14 @@ public class VisualizarTarefaActivity extends AppCompatActivity {
         dialogCarregando = b.setView(dialogBinding.getRoot()).create();
     }
 
+    @SuppressLint("SetTextI18n")
     private void configurarNaoAdm(){
 
         filesTarefa = FirebaseStorage.getInstance().getReference().getRoot().child("filesTarefa").child(idTarefa);
 
         mainBinding.nomeField.getEditText().setText(tarefaSelecionada.getNomeTarefa());
         mainBinding.descricaoField.getEditText().setText(tarefaSelecionada.getDescri());
-        mainBinding.tempoField.setText(tarefaSelecionada.getHora());
+        mainBinding.textInformativoHorasData.setText("Tarefa termina no dia " + tarefaSelecionada.getData() + " às " + tarefaSelecionada.getHora());
 
         @SuppressLint("SimpleDateFormat") SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
         Date data;
@@ -485,11 +550,49 @@ public class VisualizarTarefaActivity extends AppCompatActivity {
         dialogCriarCheck = b.create();
     }
 
+    private void configurarDialogSelecionarResponsavelSubCheck(){
+        AlertDialog.Builder b = new AlertDialog.Builder(this);
+        LayoutExibirUsersBinding usersBinding = LayoutExibirUsersBinding.inflate(getLayoutInflater());
+        b.setTitle("Selecione o Responsável:");
+        b.setPositiveButton("Fechar", (dialogInterface, i) -> {
+            dialogExibirResponsavelSubCheck.dismiss();
+        });
+        //INICIO configurar recyclerExibicao dos usuarios
+        RecyclerView recyclerExibirUsuariosSelecionaveis = usersBinding.recyclerUsuarios;
+        recyclerExibirUsuariosSelecionaveis.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
+        recyclerExibirUsuariosSelecionaveis.setLayoutManager(new LinearLayoutManager(this));
+        recyclerExibirUsuariosSelecionaveis.setHasFixedSize(true);
+        adapterUsuariosSelecionaveis = new AdapterUsuarios(listaDeUsuariosParaSelecionar, this, true, true, textResponsavelSubCheck, dialogExibirResponsavelSubCheck);
+        recyclerExibirUsuariosSelecionaveis.setAdapter(adapterUsuariosSelecionaveis);
+        //FIM configurar recyclerExibicao dos usuarios
+        b.setView(usersBinding.getRoot());
+        dialogExibirResponsavelSubCheck = b.create();
+    }
+
     @SuppressLint("NotifyDataSetChanged")
     private void configurarDialogSubCheck(){
         AlertDialog.Builder b = new AlertDialog.Builder(this);
         b.setTitle("Adicionar um Sub Check");
         LayoutCriarSubCheckBinding subCheckBinding = LayoutCriarSubCheckBinding.inflate(getLayoutInflater());
+
+        subCheckBinding.cadastrarResposavelSubCheck.setOnClickListener( view -> {
+            atualizarListaDeSelecaoDeUsuarios(dialogExibirResponsavelSubCheck);
+        });
+
+        subCheckBinding.enviarArquivoInSubCheck.setOnClickListener( view -> {
+            openFilePicker(REQUEST_PICK_FILE_IN_SUB_CHECK);
+        });
+
+        subCheckBinding.recyclerFileInSubCheck.setHasFixedSize(true);
+        subCheckBinding.recyclerFileInSubCheck.setLayoutManager(new LinearLayoutManager(this));
+        subCheckBinding.recyclerFileInSubCheck.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
+        adapterFilesSubCheck = new AdapterArquivos(listaDeArquivosDoSubCheck, this, idTarefa, dialogCarregando);
+        subCheckBinding.recyclerFileInSubCheck.setAdapter(adapterFilesSubCheck);
+
+
+        textResponsavelSubCheck = subCheckBinding.textResponsavelSubCheck;
+        configurarDialogSelecionarResponsavelSubCheck();
+
         subCheckBinding.cadastrarCheckBtn.setOnClickListener(view -> {
             String nomeSubCheck = subCheckBinding.nomeCheckField.getEditText().getText().toString();
             if ( nomeSubCheck.isEmpty() ) {
@@ -497,12 +600,29 @@ public class VisualizarTarefaActivity extends AppCompatActivity {
             }else{
                 String checkId = UUID.randomUUID().toString();
 
-                listaDeSubChecks.add(new CheckModel(
-                        checkId, idTarefa, nomeSubCheck,"", false
-                ));
+
+                CheckModel subCheckNovo = new CheckModel(
+                        checkId,
+                        idTarefa, nomeSubCheck,"", false
+                );
+
+                int posicaoSelecionado = subCheckBinding.textResponsavelSubCheck.getText().toString().indexOf("selecionado!");
+
+                if (posicaoSelecionado != -1) {
+                    // Cortar a string do início até a posição da palavra "selecionado!"
+                    String resultadoNomeResponsavelSubCheck = subCheckBinding.textResponsavelSubCheck.getText().toString().substring(0, posicaoSelecionado);
+                    subCheckNovo.setNomeResponsavel(resultadoNomeResponsavelSubCheck);
+                }
+
+                subCheckNovo.getfilesDoCheck().addAll(listaDeArquivosDoSubCheck);
+
+                listaDeArquivosDoSubCheck.clear();
+                adapterFilesSubCheck.notifyDataSetChanged();
+                listaDeSubChecks.add(subCheckNovo);
 
                 adapterSubCheck.notifyDataSetChanged();
                 subCheckBinding.nomeCheckField.getEditText().setText("");
+                subCheckBinding.textResponsavelSubCheck.setText("Selecione um Responsável");
                 dialogSubCheck.dismiss();
             }
         });
